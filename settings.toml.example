@@ -1,0 +1,4 @@
+host = "https://example.com"
+secret_key = "your-secret"
+port = 5000
+debug = true
