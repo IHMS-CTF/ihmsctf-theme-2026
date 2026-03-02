@@ -5,6 +5,5 @@ dist
 *.pyc
 __pycache__
 Dockerfile
-docker-entrypoint.sh
 .env
 config/settings.toml
