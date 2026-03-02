@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import axios from 'axios';
+import logo from '../assets/ihmsctflogo.png';
 import { Shield, Target, Database, Cpu, Globe, ChevronRight } from 'lucide-react';
 
 interface HomeProps {
@@ -19,15 +20,18 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
         <div className="hero-bg-pattern"></div>
         
         <div className="hero-content max-w-2xl space-y-6">
-          <div>
-            <div className="page-subtitle">
-              <div className="status-dot online"></div>
-              System Online
+          <div className="flex items-start gap-6">
+            <img src={logo} alt="IHMS CTF" className="hero-logo-img h-24 w-24 md:h-32 md:w-32 object-contain hidden sm:block" />
+            <div>
+              <div className="page-subtitle">
+                <div className="status-dot online"></div>
+                System Online
+              </div>
+              <h1 className="hero-title">
+                IHMS<br/>
+                <span className="title-accent">Capture The Flag</span>
+              </h1>
             </div>
-            <h1 className="hero-title">
-              IHMS<br/>
-              <span className="title-accent">Capture The Flag</span>
-            </h1>
           </div>
           
           <p className="hero-subtitle text-lg leading-relaxed max-w-xl">

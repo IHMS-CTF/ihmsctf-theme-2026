@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import logo from './assets/ihmsctflogo.png';
 import { 
   LogOut, 
   Menu,
@@ -7,7 +8,6 @@ import {
   User,
   Settings as SettingsIcon,
   Shield,
-  Trophy,
   Activity,
   Cpu,
   Terminal,
@@ -236,8 +236,8 @@ const App: React.FC = () => {
       
       {/* Header */}
       <header className="header">
-        <div className="header-logo">
-          <Trophy className="logo-icon" />
+        <div className="header-logo" onClick={() => navigate('home')} style={{ cursor: 'pointer' }}>
+          <img src={logo} alt="IHMS CTF Logo" className="logo-img" />
           <span className="logo-text">
             IHMS<span className="logo-accent">CTF</span>
           </span>
@@ -480,8 +480,8 @@ const App: React.FC = () => {
       {isMenuOpen && (
         <div className="mobile-menu">
           <div className="mobile-menu-header">
-            <div className="flex items-center gap-2">
-              <Trophy className="h-5 w-5 text-maroon" />
+            <div className="flex items-center gap-2" onClick={() => navigate('home')} style={{ cursor: 'pointer' }}>
+              <img src={logo} alt="Logo" className="h-6 w-6 object-contain" />
               <span className="font-display font-bold tracking-wide">IHMS<span className="text-maroon">CTF</span></span>
             </div>
             <button onClick={() => setIsMenuOpen(false)} className="close-btn" aria-label="Close menu">

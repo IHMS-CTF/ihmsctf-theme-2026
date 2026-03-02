@@ -52,6 +52,7 @@
     font-size: 2.5rem;
     font-weight: 900;
     letter-spacing: 0.05em;
+    line-height: 1.1;
     
     @include md {
       font-size: 3.5rem;
@@ -61,6 +62,11 @@
       color: $maroon;
       text-shadow: $glow-maroon;
     }
+  }
+
+  .hero-logo-img {
+    filter: drop-shadow($glow-maroon);
+    animation: float 6s ease-in-out infinite;
   }
   
   .hero-subtitle {

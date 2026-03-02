@@ -232,6 +232,12 @@ code, pre {
   to { opacity: 1; }
 }
 
+// Float
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
 // Slide in from right
 @keyframes slide-in-right {
   from { 

@@ -87,14 +87,14 @@
       gap: $space-3;
     }
     
-    .logo-icon {
-      width: 20px;
-      height: 20px;
-      color: $maroon;
+    .logo-img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
       
       @include sm {
-        width: 24px;
-        height: 24px;
+        width: 32px;
+        height: 32px;
       }
     }
     
