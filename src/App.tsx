@@ -17,7 +17,9 @@ import {
   Target,
   BarChart3,
   Users as UsersIcon,
-  Globe
+  Globe,
+  Wifi,
+  ChevronRight
 } from 'lucide-react';
 
 // Components
@@ -31,6 +33,7 @@ import TeamProfile from './pages/TeamProfile';
 import Settings from './pages/Settings';
 import ChallengeDetail from './pages/ChallengeDetail';
 
+// Live clock component
 const Timer: React.FC = () => {
   const [currentTime, setCurrentTime] = useState("");
   
@@ -50,10 +53,32 @@ const Timer: React.FC = () => {
   }, []);
   
   return (
-    <span className="text-edex-cyan font-bold text-xl tabular-nums">
+    <span className="text-green font-bold text-xl tabular-nums">
       {currentTime}
     </span>
   );
+};
+
+// Hex stream decoration
+const HexStream: React.FC = () => {
+  const [hex, setHex] = useState('');
+  
+  useEffect(() => {
+    const generateHex = () => {
+      let result = '';
+      for (let i = 0; i < 200; i++) {
+        result += Math.floor(Math.random() * 16).toString(16).toUpperCase();
+        if (i % 2 === 1) result += ' ';
+      }
+      setHex(result);
+    };
+    
+    generateHex();
+    const interval = setInterval(generateHex, 5000);
+    return () => clearInterval(interval);
+  }, []);
+  
+  return <div className="hex-stream">{hex}</div>;
 };
 
 const App: React.FC = () => {
@@ -123,7 +148,7 @@ const App: React.FC = () => {
     };
 
     fetchActivity();
-    const activityInterval = setInterval(fetchActivity, 30000); // Refresh every 30s
+    const activityInterval = setInterval(fetchActivity, 30000);
 
     return () => {
       window.removeEventListener('popstate', syncStateWithUrl);
@@ -157,13 +182,19 @@ const App: React.FC = () => {
     }
   };
 
+  // Loading screen
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen bg-edex-bg font-mono">
-        <Terminal className="h-16 w-16 text-edex-cyan mb-6 animate-pulse" />
-        <div className="text-2xl font-bold text-edex-text mb-4">Initializing...</div>
-        <div className="w-48 h-1 bg-edex-border overflow-hidden rounded">
-          <div className="w-full h-full bg-edex-cyan animate-pulse"></div>
+      <div className="flex flex-col items-center justify-center h-screen bg-void font-mono">
+        <Terminal className="h-16 w-16 text-maroon mb-6 animate-pulse" />
+        <div className="text-2xl font-bold text-primary mb-4 font-display tracking-widest">
+          INITIALIZING<span className="animate-blink">_</span>
+        </div>
+        <div className="w-48 h-1 bg-border-dim overflow-hidden">
+          <div className="w-full h-full bg-maroon animate-pulse"></div>
+        </div>
+        <div className="mt-4 text-xs text-muted uppercase tracking-widest">
+          Loading system modules...
         </div>
       </div>
     );
@@ -192,59 +223,54 @@ const App: React.FC = () => {
   const NavItem = ({ icon: Icon, label, id, active }: { icon: any, label: string, id: string, active: boolean }) => (
     <button 
       onClick={() => navigate(id)}
-      className={`w-full flex items-center gap-3 px-4 py-3 transition-all duration-200 text-sm font-medium ${
-        active 
-          ? 'edex-nav-active' 
-          : 'edex-nav-item'
-      }`}
+      className={`nav-item w-full ${active ? 'active' : ''}`}
     >
-      <Icon className={`h-4 w-auto ${active ? 'text-edex-cyan' : ''}`} />
-      <span>{label}</span>
+      <Icon className="nav-icon" />
+      <span className="flex-grow text-left">{label}</span>
+      <ChevronRight className="nav-arrow h-4 w-4" />
     </button>
   );
 
   return (
-    <div className="h-screen w-screen bg-edex-bg text-edex-text font-mono flex flex-col overflow-hidden select-none">
+    <div className="app-container">
       
-      {/* Top Header */}
+      {/* Header */}
       <header className="header">
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2">
-            <Trophy className="h-5 w-auto text-edex-primary" />
-            <span className="text-base font-bold text-edex-text">
-              IHMS<span className="text-edex-primary">CTF</span>
-            </span>
+        <div className="header-logo">
+          <Trophy className="logo-icon" />
+          <span className="logo-text">
+            IHMS<span className="logo-accent">CTF</span>
+          </span>
+        </div>
+        
+        {/* System Stats - desktop only */}
+        <div className="header-stats">
+          <div className="stat-item">
+            <Cpu className="h-3 w-3" />
+            <span>CPU:</span>
+            <span className="stat-value">{stats.cpu}%</span>
           </div>
-          
-          {/* System Stats - desktop only */}
-          <div className="header-stats">
-            <div className="flex items-center gap-2">
-              <Cpu className="h-4 w-auto" />
-              <span>CPU: {stats.cpu}%</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Activity className="h-4 w-auto" />
-              <span>MEM: {stats.ram}%</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Zap className="h-4 w-auto" />
-              <span>LAT: {stats.latency}ms</span>
-            </div>
+          <div className="stat-item">
+            <Activity className="h-3 w-3" />
+            <span>MEM:</span>
+            <span className="stat-value">{stats.ram}%</span>
+          </div>
+          <div className="stat-item">
+            <Zap className="h-3 w-3" />
+            <span>LAT:</span>
+            <span className="stat-value">{stats.latency}ms</span>
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
-          {/* Status Indicator */}
+        <div className="header-user">
           <div className="status-indicator">
-            <div className="edex-status-online"></div>
-            <span className="text-xs font-medium text-edex-success">Online</span>
+            <div className="status-dot online"></div>
+            <span>ONLINE</span>
           </div>
           
           {user && (
-            <div className="flex items-center gap-3">
-              <span className="user-name">
-                {user.name}
-              </span>
+            <>
+              <span className="user-name">{user.name}</span>
               <button 
                 onClick={handleLogout}
                 className="logout-btn"
@@ -252,155 +278,191 @@ const App: React.FC = () => {
               >
                 <LogOut className="h-4 w-4" />
               </button>
-            </div>
+            </>
           )}
         </div>
       </header>
 
-      {/* Main Container */}
-      <div className="flex-grow flex overflow-hidden">
-        
-        {/* Left Sidebar - Navigation */}
-        <aside className="sidebar-left">
-          <nav className="flex-grow py-4">
-            <div className="px-4 mb-2">
-              <span className="text-xs font-semibold text-edex-text-muted uppercase tracking-wider">Navigation</span>
-            </div>
-            <div className="nav-group">
-              <NavItem icon={LayoutDashboard} label="Home" id="home" active={activeView === 'home'} />
-              <NavItem icon={BarChart3} label="Scoreboard" id="scoreboard" active={activeView === 'scoreboard'} />
-              {user && (
-                <>
-                  <NavItem icon={Target} label="Challenges" id="challenges" active={activeView === 'challenges'} />
-                  <NavItem icon={UsersIcon} label="Users" id="users" active={activeView === 'users'} />
-                  <NavItem icon={Globe} label="Teams" id="teams" active={activeView === 'teams'} />
-                </>
-              )}
-            </div>
+      {/* Left Sidebar */}
+      <aside className="sidebar-left">
+        <nav className="flex-grow">
+          <div className="nav-group">
+            <div className="nav-group-title">System</div>
+            <NavItem icon={LayoutDashboard} label="Dashboard" id="home" active={activeView === 'home'} />
+            <NavItem icon={BarChart3} label="Scoreboard" id="scoreboard" active={activeView === 'scoreboard'} />
+          </div>
 
-            <div className="px-4 mt-6 mb-2">
-              <span className="text-xs font-semibold text-edex-text-muted uppercase tracking-wider">Account</span>
-            </div>
+          {user && (
             <div className="nav-group">
-              {user ? (
-                <>
-                  <NavItem icon={Shield} label="Profile" id="team-profile" active={activeView === 'team-profile'} />
-                  <NavItem icon={SettingsIcon} label="Settings" id="settings" active={activeView === 'settings'} />
-                </>
+              <div className="nav-group-title">Operations</div>
+              <NavItem icon={Target} label="Challenges" id="challenges" active={activeView === 'challenges'} />
+              <NavItem icon={UsersIcon} label="Users" id="users" active={activeView === 'users'} />
+              <NavItem icon={Globe} label="Teams" id="teams" active={activeView === 'teams'} />
+            </div>
+          )}
+
+          <div className="nav-group">
+            <div className="nav-group-title">Account</div>
+            {user ? (
+              <>
+                <NavItem icon={Shield} label="My Team" id="team-profile" active={activeView === 'team-profile'} />
+                <NavItem icon={SettingsIcon} label="Settings" id="settings" active={activeView === 'settings'} />
+              </>
+            ) : (
+              <NavItem icon={User} label="Login" id="login" active={activeView === 'login'} />
+            )}
+          </div>
+        </nav>
+
+        {/* Sidebar Footer */}
+        <div className="sidebar-footer">
+          <div className="system-status">
+            <div className="status-line">
+              <span>SYS</span>
+              <span className="status-value">OK</span>
+            </div>
+            <div className="status-line">
+              <span>NET</span>
+              <span className="status-value">SECURE</span>
+            </div>
+            <div className="status-line">
+              <span>VER</span>
+              <span className="status-value">1.4.0</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="main-content">
+        <div className={`content-area ${activeView === 'challenges' ? 'p-2' : ''}`}>
+          <div className={`mx-auto ${activeView === 'challenges' ? 'h-full max-w-7xl' : 'max-w-6xl'}`}>
+            {renderView()}
+          </div>
+        </div>
+      </main>
+
+      {/* Right Sidebar - Widgets */}
+      <aside className="sidebar-right">
+        {/* Time Widget */}
+        <div className="widget">
+          <div className="widget-header">
+            <div className="widget-title">
+              <Clock className="inline h-3 w-3 mr-1" />
+              System Time
+            </div>
+          </div>
+          <div className="widget-content">
+            <Timer />
+            <div className="text-xs text-muted mt-1">Local timezone</div>
+          </div>
+        </div>
+
+        {/* Activity Feed Widget */}
+        <div className="widget">
+          <div className="widget-header">
+            <div className="widget-title">
+              <Activity className="inline h-3 w-3 mr-1" />
+              Activity Feed
+            </div>
+            <span className="widget-action">View all</span>
+          </div>
+          <div className="widget-content">
+            <div className="terminal-panel p-3 h-48 overflow-y-auto custom-scrollbar text-xs space-y-2 bg-terminal">
+              {activityLog.length > 0 ? (
+                activityLog.map((log, idx) => (
+                  <div key={idx} className="flex gap-2">
+                    <span className={log.type === 'solve' ? 'text-success' : 'text-cyan'}>
+                      [{log.type === 'solve' ? 'SOLVE' : 'INFO'}]
+                    </span>
+                    <span className="text-secondary truncate">
+                      {log.team}: {log.score} pts
+                    </span>
+                  </div>
+                ))
               ) : (
-                <NavItem icon={User} label="Login" id="login" active={activeView === 'login'} />
+                <>
+                  <div className="flex gap-2">
+                    <span className="text-success">[OK]</span>
+                    <span className="text-secondary">System initialized</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <span className="text-cyan">[INFO]</span>
+                    <span className="text-secondary">Connected to CTFd</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <span className="text-muted animate-blink">_</span>
+                    <span className="text-muted">Awaiting data...</span>
+                  </div>
+                </>
               )}
             </div>
-          </nav>
+          </div>
+        </div>
 
-          {/* Sidebar Footer */}
-          <div className="p-4 border-t border-edex-border">
-            <div className="edex-panel p-4 text-center">
-              <Terminal className="h-8 w-auto text-edex-text-muted mx-auto mb-2 opacity-50" />
-              <div className="text-xs text-edex-text-muted">v1.4.0</div>
+        {/* Network Status Widget */}
+        <div className="widget">
+          <div className="widget-header">
+            <div className="widget-title">
+              <Wifi className="inline h-3 w-3 mr-1" />
+              Network
             </div>
           </div>
-        </aside>
-
-        {/* Central Viewport */}
-        <main className="main-content">
-          <div className={`flex-grow overflow-y-auto edex-scrollbar ${activeView === 'challenges' ? 'p-2' : 'p-6'}`}>
-            <div className={`mx-auto ${activeView === 'challenges' ? 'h-full max-w-7xl' : 'max-w-6xl'}`}>
-              {renderView()}
-            </div>
-          </div>
-        </main>
-
-        {/* Right Sidebar - Stats & Info */}
-        <aside className="sidebar-right">
-          <div className="p-4 space-y-6">
-            {/* Current Time */}
-            <div className="edex-panel p-4">
-              <div className="flex items-center gap-2 text-xs font-semibold text-edex-text-muted uppercase tracking-wider mb-3">
-                <Clock className="h-4 w-auto" />
-                Current Time
+          <div className="widget-content">
+            <div className="grid grid-cols-2 gap-2">
+              <div className="terminal-panel p-2 text-center">
+                <div className="text-xs text-muted">Protocol</div>
+                <div className="text-sm font-bold text-primary">TLS 1.3</div>
               </div>
-              <Timer />
-              <div className="text-xs text-edex-text-muted mt-1">Local time</div>
-            </div>
-
-            {/* System Log */}
-            <div>
-              <div className="flex items-center gap-2 text-xs font-semibold text-edex-text-muted uppercase tracking-wider mb-3">
-                <Activity className="h-4 w-auto" />
-                Activity Feed
-              </div>
-              <div className="edex-panel bg-edex-bg p-3 h-52 overflow-y-auto edex-scrollbar text-xs space-y-2">
-                {activityLog.length > 0 ? (
-                  activityLog.map((log, idx) => (
-                    <div key={idx} className="flex gap-2">
-                      <span className={log.type === 'solve' ? 'text-edex-success' : 'text-edex-cyan'}>
-                        [{log.type === 'solve' ? 'SOLVE' : 'INFO'}]
-                      </span>
-                      <span className="text-edex-text-secondary truncate">
-                        {log.team}: {log.score} pts
-                      </span>
-                    </div>
-                  ))
-                ) : (
-                  <>
-                    <div className="flex gap-2">
-                      <span className="text-edex-success">[OK]</span>
-                      <span className="text-edex-text-secondary">System initialized</span>
-                    </div>
-                    <div className="flex gap-2">
-                      <span className="text-edex-cyan">[INFO]</span>
-                      <span className="text-edex-text-secondary">Connected to CTFd API</span>
-                    </div>
-                    <div className="flex gap-2">
-                      <span className="text-edex-success">[OK]</span>
-                      <span className="text-edex-text-secondary">Session active</span>
-                    </div>
-                    <div className="flex gap-2">
-                      <span className="text-edex-text-muted animate-pulse">_</span>
-                      <span className="text-edex-text-muted">Awaiting data...</span>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-
-            {/* Quick Stats */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="edex-panel p-3 text-center">
-                <div className="text-xs text-edex-text-muted mb-1">Network</div>
-                <div className="text-sm font-bold text-edex-text">Secure</div>
-              </div>
-              <div className="edex-panel p-3 text-center">
-                <div className="text-xs text-edex-text-muted mb-1">Protocol</div>
-                <div className="text-sm font-bold text-edex-text">TLS 1.3</div>
+              <div className="terminal-panel p-2 text-center">
+                <div className="text-xs text-muted">Status</div>
+                <div className="text-sm font-bold text-success">Secure</div>
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Sidebar Footer */}
-          <div className="mt-auto p-4 border-t border-edex-border">
-            <p className="text-xs text-edex-text-muted leading-relaxed">
-              Indian Hills Middle School CTF Competition Platform
-            </p>
+        {/* Hex Stream Decoration */}
+        <div className="widget">
+          <div className="widget-header">
+            <div className="widget-title">
+              <Terminal className="inline h-3 w-3 mr-1" />
+              Data Stream
+            </div>
           </div>
-        </aside>
-      </div>
+          <div className="widget-content">
+            <div className="terminal-panel p-2 h-16 overflow-hidden bg-terminal">
+              <HexStream />
+            </div>
+          </div>
+        </div>
 
-      {/* Footer Status Bar */}
+        {/* Footer Info */}
+        <div className="mt-auto p-4 border-t border-dim text-xs text-muted">
+          Indian Hills Middle School<br />
+          CTF Competition Platform
+        </div>
+      </aside>
+
+      {/* Footer */}
       <footer className="footer">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
+        <div className="footer-left">
+          <div className="status-indicator">
             <div className="status-dot"></div>
-            <span>IHMS CTF</span>
+            <span>IHMS_CTF_v1.4.0</span>
           </div>
-          <span className="footer-version">v1.4.0</span>
-          <span className="footer-session">
-            {user ? `Session: ${user.name}` : 'Guest Mode'}
+          <span className="footer-item">
+            {user ? `SESSION: ${user.name.toUpperCase()}` : 'GUEST_MODE'}
           </span>
         </div>
-        <div className="flex items-center gap-4">
-          <span className="footer-coords">39.0062° N, 94.6293° W</span>
+        <div className="footer-center">
+          Capture The Flag Competition System
+        </div>
+        <div className="footer-right">
+          <span className="footer-item">39.0062N 94.6293W</span>
+          <span className="footer-item tabular-nums">
+            {new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }).toUpperCase()}
+          </span>
         </div>
       </footer>
 
@@ -417,32 +479,62 @@ const App: React.FC = () => {
       {/* Mobile Menu Overlay */}
       {isMenuOpen && (
         <div className="mobile-menu">
-          <div className="text-xl font-bold text-edex-text mb-8">Navigation</div>
-          <div className="flex flex-col gap-2">
-            <button onClick={() => navigate('home')} className="mobile-menu-item">
-              Home
+          <div className="mobile-menu-header">
+            <div className="flex items-center gap-2">
+              <Trophy className="h-5 w-5 text-maroon" />
+              <span className="font-display font-bold tracking-wide">IHMS<span className="text-maroon">CTF</span></span>
+            </div>
+            <button onClick={() => setIsMenuOpen(false)} className="close-btn">
+              <X className="h-6 w-6" />
             </button>
-            <button onClick={() => navigate('scoreboard')} className="mobile-menu-item">
+          </div>
+          
+          <nav className="mobile-menu-nav">
+            <button onClick={() => navigate('home')} className={`mobile-nav-item ${activeView === 'home' ? 'active' : ''}`}>
+              <LayoutDashboard className="h-5 w-5" />
+              Dashboard
+            </button>
+            <button onClick={() => navigate('scoreboard')} className={`mobile-nav-item ${activeView === 'scoreboard' ? 'active' : ''}`}>
+              <BarChart3 className="h-5 w-5" />
               Scoreboard
             </button>
             {user && (
               <>
-                <button onClick={() => navigate('challenges')} className="mobile-menu-item">
+                <button onClick={() => navigate('challenges')} className={`mobile-nav-item ${activeView === 'challenges' ? 'active' : ''}`}>
+                  <Target className="h-5 w-5" />
                   Challenges
+                </button>
+                <button onClick={() => navigate('users')} className={`mobile-nav-item ${activeView === 'users' ? 'active' : ''}`}>
+                  <UsersIcon className="h-5 w-5" />
+                  Users
+                </button>
+                <button onClick={() => navigate('teams')} className={`mobile-nav-item ${activeView === 'teams' ? 'active' : ''}`}>
+                  <Globe className="h-5 w-5" />
+                  Teams
                 </button>
               </>
             )}
-            <div className="border-t border-edex-border my-4"></div>
+            
+            <div className="border-t border-dim my-4"></div>
+            
             {user ? (
-              <button onClick={handleLogout} className="mobile-menu-item text-edex-error">
-                Logout
-              </button>
+              <>
+                <button onClick={() => navigate('settings')} className={`mobile-nav-item ${activeView === 'settings' ? 'active' : ''}`}>
+                  <SettingsIcon className="h-5 w-5" />
+                  Settings
+                </button>
+                <button onClick={handleLogout} className="mobile-nav-item text-error">
+                  <LogOut className="h-5 w-5" />
+                  Logout
+                </button>
+              </>
             ) : (
-              <button onClick={() => navigate('login')} className="mobile-menu-item text-edex-cyan">
+              <button onClick={() => navigate('login')} className={`mobile-nav-item ${activeView === 'login' ? 'active' : ''}`}>
+                <User className="h-5 w-5" />
                 Login
               </button>
             )}
-          </div>
+          </nav>
         </div>
       )}
     </div>

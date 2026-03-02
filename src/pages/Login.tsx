@@ -34,71 +34,73 @@ const Login: React.FC<LoginProps> = ({ onLogin, onNavigate }) => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-12 animate-zoom-in">
-      <div className="edex-panel-accent p-8">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="login-icon">
-            <ShieldCheck className="h-10 w-auto" />
-          </div>
-          <h2 className="text-3xl font-bold text-edex-text mb-2">
-            Welcome Back
-          </h2>
-          <p className="text-edex-text-secondary">
-            Sign in to access the CTF platform
-          </p>
-        </div>
-
-        {/* Error Alert */}
-        {error && (
-          <div className="edex-alert-error mb-6">
-            <AlertCircle className="h-5 w-auto flex-shrink-0" />
-            <div>
-              <p className="font-semibold text-sm">Authentication Failed</p>
-              <p className="text-xs opacity-80">{error}</p>
+    <div className="login-page">
+      <div className="login-container">
+        <div className="login-panel">
+          {/* Header */}
+          <div className="login-header">
+            <div className="login-icon">
+              <ShieldCheck className="h-10 w-10" />
             </div>
-          </div>
-        )}
-
-        {/* Login Form */}
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="edex-label flex items-center justify-between" htmlFor="username">
-              <span>Username</span>
-              <User className="h-4 w-auto text-edex-text-muted" />
-            </label>
-            <input
-              className="edex-input"
-              id="username"
-              type="text"
-              placeholder="Enter your username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-              autoComplete="username"
-            />
+            <h2 className="login-title">
+              ACCESS_TERMINAL
+            </h2>
+            <p className="login-subtitle">
+              Enter credentials to authenticate
+            </p>
           </div>
 
-          <div>
-            <label className="edex-label flex items-center justify-between" htmlFor="password">
-              <span>Password</span>
-              <Lock className="h-4 w-auto text-edex-text-muted" />
-            </label>
-            <input
-              className="edex-input"
-              id="password"
-              type="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              autoComplete="current-password"
-            />
-          </div>
+          {/* Error Alert */}
+          {error && (
+            <div className="alert alert-error mb-6">
+              <AlertCircle className="alert-icon h-5 w-5" />
+              <div>
+                <p className="font-semibold text-sm">Authentication Failed</p>
+                <p className="text-xs opacity-80">{error}</p>
+              </div>
+            </div>
+          )}
 
-          <div className="pt-2">
+          {/* Login Form */}
+          <form onSubmit={handleSubmit} className="login-form">
+            <div className="form-group">
+              <label className="label" htmlFor="username">
+                Username
+              </label>
+              <div className="input-with-icon">
+                <User className="input-icon h-4 w-4" />
+                <input
+                  id="username"
+                  type="text"
+                  placeholder="Enter username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                  autoComplete="username"
+                />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label className="label" htmlFor="password">
+                Password
+              </label>
+              <div className="input-with-icon">
+                <Lock className="input-icon h-4 w-4" />
+                <input
+                  id="password"
+                  type="password"
+                  placeholder="Enter password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  autoComplete="current-password"
+                />
+              </div>
+            </div>
+
             <button
-              className={`w-full ${loading ? 'edex-btn-ghost cursor-wait' : 'edex-btn-primary'}`}
+              className={`login-btn ${loading ? 'btn-ghost cursor-wait' : 'btn-primary-solid'} w-full flex items-center justify-center gap-2`}
               type="submit"
               disabled={loading}
             >
@@ -108,23 +110,23 @@ const Login: React.FC<LoginProps> = ({ onLogin, onNavigate }) => {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                   </svg>
-                  Signing in...
+                  Authenticating...
                 </>
               ) : (
                 <>
-                  <LogIn className="h-4 w-auto" />
-                  Sign In
+                  <LogIn className="h-4 w-4" />
+                  Authenticate
                 </>
               )}
             </button>
-          </div>
-        </form>
+          </form>
 
-        {/* Footer */}
-        <div className="mt-8 pt-6 border-t border-edex-border text-center">
-          <p className="text-xs text-edex-text-muted">
-            All login attempts are logged for security purposes
-          </p>
+          {/* Footer */}
+          <div className="mt-8 pt-6 border-t border-dim text-center">
+            <p className="text-xs text-muted">
+              All login attempts are logged for security purposes
+            </p>
+          </div>
         </div>
       </div>
     </div>

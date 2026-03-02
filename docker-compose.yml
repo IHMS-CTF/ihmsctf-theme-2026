@@ -5,18 +5,8 @@ services:
       - "8000:8000"
     environment:
       FLASK_ENV: production
-      SECRET_KEY: "change-me"
-      REDIS_URL: "redis://redis:6379/0"
+      SECRET_KEY: "${SECRET_KEY:-change-me-in-production}"
       SESSION_COOKIE_SECURE: "true"
       SESSION_COOKIE_SAMESITE: "Lax"
-      CTFD_HOST: "https://demo.ctfd.io"
-    depends_on:
-      - redis
-    restart: unless-stopped
-    network_mode: "host"
-
-  redis:
-    image: redis:7-alpine
-    command: ["redis-server", "--save", "", "--appendonly", "no"]
-    network_mode: "host"
+      CTFD_HOST: "${CTFD_HOST:-https://demo.ctfd.io}"
     restart: unless-stopped

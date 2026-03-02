@@ -68,8 +68,8 @@ const ChallengeDetail: React.FC<ChallengeDetailProps> = ({ id, onNavigate }) => 
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-full py-40">
-        <Loader2 className="h-12 w-auto text-edex-cyan animate-spin mb-4" />
-        <p className="text-edex-text-muted font-medium">Loading challenge...</p>
+        <Loader2 className="h-12 w-12 text-cyan animate-spin mb-4" />
+        <p className="text-muted font-medium">Loading challenge...</p>
       </div>
     );
   }
@@ -77,11 +77,11 @@ const ChallengeDetail: React.FC<ChallengeDetailProps> = ({ id, onNavigate }) => 
   if (!challenge) {
     return (
       <div className="flex flex-col items-center justify-center h-full py-40">
-        <AlertCircle className="h-16 w-auto text-edex-error mb-6" />
-        <h2 className="text-2xl font-bold text-edex-text mb-2">Challenge Not Found</h2>
-        <p className="text-edex-text-muted mb-8">The requested challenge does not exist or has been removed.</p>
-        <button onClick={() => onNavigate('challenges')} className="edex-btn-secondary">
-          <ArrowLeft className="h-4 w-auto" />
+        <AlertCircle className="h-16 w-16 text-error mb-6" />
+        <h2 className="text-2xl font-bold text-primary mb-2">Challenge Not Found</h2>
+        <p className="text-muted mb-8">The requested challenge does not exist or has been removed.</p>
+        <button onClick={() => onNavigate('challenges')} className="btn-secondary">
+          <ArrowLeft className="h-4 w-4" />
           Back to Challenges
         </button>
       </div>
@@ -93,9 +93,9 @@ const ChallengeDetail: React.FC<ChallengeDetailProps> = ({ id, onNavigate }) => 
       {/* Back Navigation */}
       <button 
         onClick={() => onNavigate('challenges')}
-        className="inline-flex items-center gap-2 text-edex-text-muted hover:text-edex-cyan transition-colors group mb-2"
+        className="inline-flex items-center gap-2 text-muted hover:text-cyan transition-colors group mb-2"
       >
-        <ArrowLeft className="h-4 w-auto group-hover:-translate-x-1 transition-transform" />
+        <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
         <span className="text-sm font-medium">Back to Challenges</span>
       </button>
 
@@ -103,32 +103,32 @@ const ChallengeDetail: React.FC<ChallengeDetailProps> = ({ id, onNavigate }) => 
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
           {/* Challenge Header */}
-          <div className="edex-panel-accent p-6 relative">
+          <div className="terminal-panel-glow p-6 relative">
             {challenge.solved_by_me && (
               <div className="absolute top-4 right-4">
-                <span className="edex-badge-success">
-                  <CheckCircle2 className="h-3 w-auto mr-1" />
+                <span className="badge-success">
+                  <CheckCircle2 className="h-3 w-3 mr-1" />
                   Solved
                 </span>
               </div>
             )}
             
             <div className="space-y-4">
-              <span className="edex-badge-cyan">
+              <span className="badge-secondary">
                 {challenge.category}
               </span>
               
-              <h1 className="text-2xl font-bold text-edex-text">
+              <h1 className="text-2xl font-bold text-primary">
                 {challenge.name}
               </h1>
               
-              <div className="flex items-center gap-6 text-edex-text-muted">
+              <div className="flex items-center gap-6 text-muted">
                 <div className="flex items-center gap-2">
-                  <span className="text-xl font-bold text-edex-cyan">{challenge.value}</span>
+                  <span className="text-xl font-bold text-cyan">{challenge.value}</span>
                   <span className="text-xs uppercase tracking-wider">points</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Users className="h-4 w-auto" />
+                  <Users className="h-4 w-4" />
                   <span className="text-xs uppercase tracking-wider">{challenge.solves || 0} solves</span>
                 </div>
               </div>
@@ -136,19 +136,19 @@ const ChallengeDetail: React.FC<ChallengeDetailProps> = ({ id, onNavigate }) => 
           </div>
 
           {/* Description */}
-          <div className="edex-panel p-6">
-            <h3 className="edex-label mb-4">Description</h3>
+          <div className="terminal-panel p-6">
+            <h3 className="label mb-4">Description</h3>
             <div 
-              className="edex-prose"
+              className="prose"
               dangerouslySetInnerHTML={{ __html: marked.parse(challenge.description || '') }}
             />
           </div>
           
           {/* Files */}
           {challenge.files && challenge.files.length > 0 && (
-            <div className="edex-panel p-6">
-              <h3 className="edex-label mb-4 flex items-center gap-2">
-                <FileText className="h-4 w-auto" />
+            <div className="terminal-panel p-6">
+              <h3 className="label mb-4 flex items-center gap-2">
+                <FileText className="h-4 w-4" />
                 Resources
               </h3>
               <div className="grid grid-cols-1 gap-2">
@@ -158,15 +158,15 @@ const ChallengeDetail: React.FC<ChallengeDetailProps> = ({ id, onNavigate }) => 
                     href={file} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="flex items-center justify-between p-3 bg-edex-bg-dark border border-edex-border hover:border-edex-cyan transition-colors group"
+                    className="flex items-center justify-between p-3 bg-void border border-border hover:border-cyan transition-colors group"
                   >
                     <div className="flex items-center gap-3 overflow-hidden">
-                      <FileText className="h-4 w-auto text-edex-text-muted flex-shrink-0" />
-                      <span className="truncate text-sm text-edex-text-muted group-hover:text-edex-text">
+                      <FileText className="h-4 w-4 text-muted flex-shrink-0" />
+                      <span className="truncate text-sm text-muted group-hover:text-primary">
                         {file.split('/').pop()?.split('?')[0]}
                       </span>
                     </div>
-                    <ExternalLink className="h-4 w-auto text-edex-text-muted group-hover:text-edex-cyan flex-shrink-0" />
+                    <ExternalLink className="h-4 w-4 text-muted group-hover:text-cyan flex-shrink-0" />
                   </a>
                 ))}
               </div>
@@ -177,9 +177,9 @@ const ChallengeDetail: React.FC<ChallengeDetailProps> = ({ id, onNavigate }) => 
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Submission Form */}
-          <div className="edex-panel-primary p-6">
-            <h3 className="edex-label mb-4 flex items-center gap-2">
-              <Flag className="h-4 w-auto" />
+          <div className="terminal-panel-glow p-6">
+            <h3 className="label mb-4 flex items-center gap-2">
+              <Flag className="h-4 w-4" />
               Submit Flag
             </h3>
             
@@ -187,7 +187,7 @@ const ChallengeDetail: React.FC<ChallengeDetailProps> = ({ id, onNavigate }) => 
               <input 
                 type="text" 
                 placeholder="flag{...}" 
-                className="edex-input font-mono"
+                className="input font-mono"
                 value={submission}
                 onChange={(e) => setSubmission(e.target.value)}
                 disabled={submitting || challenge.solved_by_me}
@@ -196,21 +196,21 @@ const ChallengeDetail: React.FC<ChallengeDetailProps> = ({ id, onNavigate }) => 
               <button 
                 type="submit"
                 disabled={submitting || challenge.solved_by_me || !submission}
-                className={`w-full ${challenge.solved_by_me ? 'edex-btn-ghost cursor-not-allowed opacity-50' : 'edex-btn-primary'}`}
+                className={`w-full ${challenge.solved_by_me ? 'btn-ghost cursor-not-allowed opacity-50' : 'btn-primary-solid'}`}
               >
                 {challenge.solved_by_me ? (
                   <>
-                    <CheckCircle2 className="h-4 w-auto" />
+                    <CheckCircle2 className="h-4 w-4" />
                     Already Solved
                   </>
                 ) : submitting ? (
                   <>
-                    <Loader2 className="h-4 w-auto animate-spin" />
+                    <Loader2 className="h-4 w-4 animate-spin" />
                     Submitting...
                   </>
                 ) : (
                   <>
-                    <Flag className="h-4 w-auto" />
+                    <Flag className="h-4 w-4" />
                     Submit
                   </>
                 )}
@@ -219,12 +219,12 @@ const ChallengeDetail: React.FC<ChallengeDetailProps> = ({ id, onNavigate }) => 
               {result && (
                 <div className={`${
                   result.data.status === 'correct' || result.data.status === 'already_solved'
-                    ? 'edex-alert-success' 
-                    : 'edex-alert-error'
+                    ? 'alert-success' 
+                    : 'alert-error'
                 }`}>
                   {result.data.status === 'correct' || result.data.status === 'already_solved' 
-                    ? <CheckCircle2 className="h-4 w-auto mt-0.5 flex-shrink-0" /> 
-                    : <AlertCircle className="h-4 w-auto mt-0.5 flex-shrink-0" />
+                    ? <CheckCircle2 className="h-4 w-4 mt-0.5 flex-shrink-0" /> 
+                    : <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
                   }
                   <div>
                     <p className="font-bold text-xs uppercase tracking-tight">{result.data.status?.replace('_', ' ')}</p>
@@ -236,32 +236,32 @@ const ChallengeDetail: React.FC<ChallengeDetailProps> = ({ id, onNavigate }) => 
           </div>
 
           {/* Stats */}
-          <div className="edex-panel p-6">
-            <h3 className="edex-label mb-4">Statistics</h3>
+          <div className="terminal-panel p-6">
+            <h3 className="label mb-4">Statistics</h3>
             <div className="grid grid-cols-2 gap-4">
-              <div className="edex-stat">
-                <div className="edex-stat-value text-edex-success">{challenge.solves || 0}</div>
-                <div className="edex-stat-label">Solves</div>
+              <div className="stat">
+                <div className="stat-value text-success">{challenge.solves || 0}</div>
+                <div className="stat-label">Solves</div>
               </div>
-              <div className="edex-stat">
-                <div className="edex-stat-value text-edex-primary">{challenge.attempts || 0}</div>
-                <div className="edex-stat-label">Attempts</div>
+              <div className="stat">
+                <div className="stat-value text-maroon">{challenge.attempts || 0}</div>
+                <div className="stat-label">Attempts</div>
               </div>
             </div>
           </div>
           
           {/* Hints */}
           {challenge.hints && challenge.hints.length > 0 && (
-            <div className="edex-panel p-6">
-              <h3 className="edex-label mb-4 flex items-center gap-2">
-                <HelpCircle className="h-4 w-auto" />
+            <div className="terminal-panel p-6">
+              <h3 className="label mb-4 flex items-center gap-2">
+                <HelpCircle className="h-4 w-4" />
                 Hints
               </h3>
               <div className="flex flex-col gap-2">
                 {challenge.hints.map((_: any, i: number) => (
                   <button 
                     key={i} 
-                    className="edex-btn-ghost text-xs justify-start"
+                    className="btn-ghost text-xs justify-start"
                   >
                     Unlock Hint {i + 1}
                   </button>

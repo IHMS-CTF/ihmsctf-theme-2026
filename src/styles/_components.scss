@@ -1,567 +1,775 @@
 // ============================================
-// IHMS CTF EDEX Theme - Component Classes
+// IHMS CTF - HACKER TERMINAL COMPONENTS
 // ============================================
 
 @use 'variables' as *;
 @use 'mixins' as *;
 
 // ============================================
-// Panels
+// TERMINAL PANELS
 // ============================================
 
-.edex-panel {
-  @include panel-base;
+.terminal-panel {
+  @include terminal-panel;
+  padding: $space-4;
 }
 
-.edex-panel-accent {
-  @include panel-base;
+.terminal-panel-glow {
+  @include terminal-panel-glow;
+  padding: $space-4;
+}
 
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background: linear-gradient(90deg, $edex-primary 0%, $edex-cyan 100%);
-    box-shadow: 0 0 12px rgba($edex-primary, 0.4);
+// Panel with header bar
+.terminal-window {
+  @include terminal-panel;
+  
+  .window-header {
+    @include flex-between;
+    padding: $space-2 $space-4;
+    background: rgba($bg-elevated, 0.8);
+    border-bottom: 1px solid $border-default;
+    
+    .window-title {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: $text-muted;
+      
+      &::before {
+        content: "//";
+        color: $maroon;
+        margin-right: $space-2;
+      }
+    }
+    
+    .window-controls {
+      display: flex;
+      gap: $space-2;
+      
+      .control-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        
+        &.red { background: $status-error; }
+        &.yellow { background: $status-warning; }
+        &.green { background: $status-success; }
+      }
+    }
+  }
+  
+  .window-content {
+    padding: $space-4;
   }
 }
 
-.edex-panel-primary {
-  @include panel-base;
-  border-color: rgba($edex-primary, 0.3);
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background-color: $edex-primary;
-    box-shadow: 0 0 12px rgba($edex-primary, 0.5);
-  }
-}
-
-.edex-card {
-  @include panel-base;
-  padding: $spacing-lg;
-  transition: all $transition-slow;
-
+// Data card (like challenge card)
+.data-card {
+  @include terminal-panel;
+  padding: $space-4;
+  transition: all $duration-normal;
+  cursor: pointer;
+  
   &:hover {
-    border-color: rgba($edex-cyan, 0.3);
-    box-shadow: 0 0 0 1px rgba($edex-cyan, 0.1), 0 12px 32px rgba(0, 0, 0, 0.4);
+    border-color: rgba($maroon, 0.4);
+    box-shadow: $glow-maroon;
+    transform: translateY(-2px);
+  }
+  
+  &.active {
+    border-color: $maroon;
+    box-shadow: $glow-maroon-intense;
+    
+    &::before {
+      opacity: 1;
+    }
   }
 }
 
 // ============================================
-// Buttons
+// BUTTONS
 // ============================================
 
-.edex-btn {
-  @include btn-base;
+.btn {
+  @include hacker-btn;
 }
 
-.edex-btn-primary {
-  @include btn-base;
-  background-color: $edex-primary;
-  color: white;
-  border-color: $edex-primary;
-  box-shadow: 0 0 20px rgba($edex-primary, 0.2);
-
+.btn-primary {
+  @include hacker-btn;
+  color: $maroon;
+  border-color: $maroon;
+  
   &:hover:not(:disabled) {
-    background-color: $edex-primary-bright;
-    border-color: $edex-primary-bright;
-    box-shadow: 0 0 30px rgba($edex-primary, 0.4);
+    background: rgba($maroon, 0.2);
+    box-shadow: $glow-maroon;
   }
-
+  
   &:active:not(:disabled) {
     transform: scale(0.98);
   }
 }
 
-.edex-btn-secondary {
-  @include btn-base;
-  background-color: transparent;
-  color: $edex-cyan;
-  border-color: rgba($edex-cyan, 0.5);
-
+.btn-primary-solid {
+  @include hacker-btn;
+  background: $maroon;
+  color: $text-glow;
+  border-color: $maroon;
+  
   &:hover:not(:disabled) {
-    background-color: rgba($edex-cyan, 0.1);
-    border-color: $edex-cyan;
+    background: $maroon-bright;
+    box-shadow: $glow-maroon-intense;
   }
 }
 
-.edex-btn-ghost {
-  @include btn-base;
-  background-color: transparent;
-  color: $edex-text-secondary;
-  border-color: $edex-border;
-
+.btn-secondary {
+  @include hacker-btn;
+  color: $cyan;
+  border-color: $cyan-dim;
+  
   &:hover:not(:disabled) {
-    color: $edex-text;
-    border-color: $edex-text-secondary;
-    background-color: $edex-surface;
+    background: rgba($cyan, 0.1);
+    box-shadow: $glow-cyan;
+    border-color: $cyan;
+  }
+}
+
+.btn-ghost {
+  @include hacker-btn;
+  color: $text-secondary;
+  border-color: $border-default;
+  
+  &:hover:not(:disabled) {
+    color: $text-primary;
+    border-color: $border-bright;
+    background: rgba($bg-elevated, 0.5);
+  }
+}
+
+.btn-danger {
+  @include hacker-btn;
+  color: $status-error;
+  border-color: $status-error;
+  
+  &:hover:not(:disabled) {
+    background: rgba($status-error, 0.2);
+    box-shadow: 0 0 20px rgba($status-error, 0.3);
   }
 }
 
 // ============================================
-// Inputs
+// INPUTS
 // ============================================
 
-.edex-input {
-  @include input-base;
+.input {
+  @include terminal-input;
 }
 
-.edex-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: $edex-text-secondary;
-  margin-bottom: 0.5rem;
+.input-with-icon {
+  position: relative;
+  
+  .input-icon {
+    position: absolute;
+    left: $space-3;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $text-muted;
+    pointer-events: none;
+  }
+  
+  input {
+    @include terminal-input;
+    padding-left: $space-10;
+  }
+}
+
+.label {
   display: block;
-}
-
-// ============================================
-// Badges
-// ============================================
-
-.edex-badge {
-  @include badge-base;
-}
-
-.edex-badge-primary {
-  @include badge-base;
-  background-color: rgba($edex-primary, 0.2);
-  color: $edex-primary-bright;
-  border: 1px solid rgba($edex-primary, 0.4);
-  box-shadow: 0 0 10px rgba($edex-primary, 0.2);
-}
-
-.edex-badge-cyan {
-  @include badge-base;
-  background-color: rgba($edex-cyan, 0.2);
-  color: $edex-cyan;
-  border: 1px solid rgba($edex-cyan, 0.3);
-}
-
-.edex-badge-success {
-  @include badge-base;
-  background-color: rgba($edex-success, 0.2);
-  color: $edex-success;
-  border: 1px solid rgba($edex-success, 0.3);
-}
-
-.edex-badge-warning {
-  @include badge-base;
-  background-color: rgba($edex-warning, 0.2);
-  color: $edex-warning;
-  border: 1px solid rgba($edex-warning, 0.3);
-}
-
-.edex-badge-error {
-  @include badge-base;
-  background-color: rgba($edex-error, 0.2);
-  color: $edex-error;
-  border: 1px solid rgba($edex-error, 0.3);
-}
-
-// ============================================
-// Status Indicators
-// ============================================
-
-.edex-status {
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 50%;
-}
-
-.edex-status-online {
-  @extend .edex-status;
-  background-color: $edex-success;
-  box-shadow: 0 0 8px rgba($edex-success, 0.6);
-  animation: glow 2s ease-in-out infinite alternate;
-}
-
-.edex-status-offline {
-  @extend .edex-status;
-  background-color: $edex-text-muted;
-}
-
-.edex-status-warning {
-  @extend .edex-status;
-  background-color: $edex-warning;
-  box-shadow: 0 0 8px rgba($edex-warning, 0.6);
-}
-
-// ============================================
-// Section Header
-// ============================================
-
-.edex-section-header {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: $spacing-lg;
-
-  h2, h3 {
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: $edex-text-secondary;
-  }
-
-  &::after {
-    content: "";
-    flex-grow: 1;
-    height: 1px;
-    background-color: $edex-border;
-  }
-}
-
-// ============================================
-// Page Titles
-// ============================================
-
-.edex-page-title {
-  font-size: 2.25rem;
-  font-weight: 900;
-  color: $edex-text;
-  letter-spacing: -0.025em;
-  line-height: 1;
-
-  @include md {
-    font-size: 3rem;
-  }
-}
-
-.edex-page-title-accent {
-  color: $edex-primary; // Changed from cyan to maroon
-  text-shadow: 0 0 20px rgba($edex-primary, 0.3);
-}
-
-.edex-page-subtitle {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: $edex-text-muted;
-  margin-bottom: 0.5rem;
+  color: $text-muted;
+  margin-bottom: $space-2;
+  
+  &::before {
+    content: ">";
+    color: $terminal-green;
+    margin-right: $space-2;
+  }
 }
 
 // ============================================
-// Tables
+// BADGES
 // ============================================
 
-.edex-table {
-  width: 100%;
-  text-align: left;
+.badge {
+  @include terminal-badge;
+  background: rgba($bg-elevated, 0.8);
+  color: $text-secondary;
+  border-color: $border-default;
+}
 
-  thead {
-    background-color: rgba($edex-surface, 0.8);
-    border-bottom: 1px solid $edex-border;
+.badge-primary {
+  @include terminal-badge;
+  background: rgba($maroon, 0.15);
+  color: $maroon-bright;
+  border-color: rgba($maroon, 0.4);
+  box-shadow: 0 0 10px rgba($maroon, 0.2);
+}
+
+.badge-secondary {
+  @include terminal-badge;
+  background: rgba($cyan, 0.1);
+  color: $cyan;
+  border-color: rgba($cyan, 0.3);
+}
+
+.badge-success {
+  @include terminal-badge;
+  background: rgba($status-success, 0.1);
+  color: $status-success;
+  border-color: rgba($status-success, 0.3);
+  box-shadow: 0 0 8px rgba($status-success, 0.2);
+}
+
+.badge-warning {
+  @include terminal-badge;
+  background: rgba($status-warning, 0.1);
+  color: $status-warning;
+  border-color: rgba($status-warning, 0.3);
+}
+
+.badge-error {
+  @include terminal-badge;
+  background: rgba($status-error, 0.1);
+  color: $status-error;
+  border-color: rgba($status-error, 0.3);
+}
+
+// ============================================
+// STATUS INDICATORS
+// ============================================
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  
+  &.online {
+    background: $status-success;
+    box-shadow: 0 0 8px $status-success;
+    animation: glow-pulse 2s ease-in-out infinite;
   }
+  
+  &.offline {
+    background: $text-muted;
+  }
+  
+  &.warning {
+    background: $status-warning;
+    box-shadow: 0 0 8px $status-warning;
+    animation: status-blink 1.5s ease-in-out infinite;
+  }
+  
+  &.error {
+    background: $status-error;
+    box-shadow: 0 0 8px $status-error;
+  }
+}
 
-  th {
-    padding: 0.75rem 1rem;
-    font-size: 0.75rem;
-    font-weight: 600;
+// ============================================
+// SECTION HEADERS
+// ============================================
+
+.section-header {
+  @include flex-between;
+  margin-bottom: $space-4;
+  
+  h2, h3 {
+    font-size: 0.7rem;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: $edex-text-muted;
-  }
-
-  tbody tr {
-    border-bottom: 1px solid rgba($edex-border, 0.5);
-    transition: background-color $transition-base;
-
-    &:hover {
-      background-color: rgba($edex-surface, 0.5);
+    letter-spacing: 0.15em;
+    color: $text-muted;
+    
+    &::before {
+      content: "[";
+      color: $maroon;
+      margin-right: $space-1;
+    }
+    
+    &::after {
+      content: "]";
+      color: $maroon;
+      margin-left: $space-1;
     }
   }
-
-  td {
-    padding: 0.75rem 1rem;
-    font-size: 0.875rem;
-    color: $edex-text-secondary;
+  
+  .header-line {
+    flex: 1;
+    height: 1px;
+    margin-left: $space-4;
+    background: linear-gradient(90deg, $border-default, transparent);
   }
 }
 
 // ============================================
-// Alerts
+// PAGE TITLES
 // ============================================
 
-.edex-alert {
-  padding: 1rem;
+.page-title {
+  font-size: 2rem;
+  font-weight: 900;
+  color: $text-primary;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  
+  @include md {
+    font-size: 2.5rem;
+  }
+  
+  .accent {
+    color: $maroon;
+    text-shadow: $glow-maroon;
+  }
+}
+
+.page-subtitle {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: $text-muted;
+  margin-bottom: $space-2;
+  
+  &::before {
+    content: "//";
+    color: $terminal-green;
+  }
+}
+
+// ============================================
+// TABLES
+// ============================================
+
+.data-table {
+  width: 100%;
+  text-align: left;
+  border-collapse: collapse;
+  
+  thead {
+    background: rgba($bg-elevated, 0.6);
+    border-bottom: 1px solid $border-default;
+  }
+  
+  th {
+    padding: $space-3 $space-4;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: $text-muted;
+  }
+  
+  tbody tr {
+    border-bottom: 1px solid rgba($border-dim, 0.5);
+    transition: all $duration-normal;
+    
+    &:hover {
+      background: rgba($maroon, 0.05);
+      border-color: rgba($maroon, 0.2);
+    }
+  }
+  
+  td {
+    padding: $space-3 $space-4;
+    font-size: 0.85rem;
+    color: $text-secondary;
+  }
+}
+
+// ============================================
+// ALERTS
+// ============================================
+
+.alert {
+  padding: $space-4;
   border: 1px solid;
   display: flex;
   align-items: flex-start;
-  gap: 0.75rem;
-}
-
-.edex-alert-success {
-  @extend .edex-alert;
-  background-color: rgba($edex-success, 0.1);
-  border-color: rgba($edex-success, 0.3);
-  color: $edex-success;
-}
-
-.edex-alert-error {
-  @extend .edex-alert;
-  background-color: rgba($edex-error, 0.1);
-  border-color: rgba($edex-error, 0.3);
-  color: $edex-error;
-}
-
-.edex-alert-warning {
-  @extend .edex-alert;
-  background-color: rgba($edex-warning, 0.1);
-  border-color: rgba($edex-warning, 0.3);
-  color: $edex-warning;
-}
-
-.edex-alert-info {
-  @extend .edex-alert;
-  background-color: rgba($edex-info, 0.1);
-  border-color: rgba($edex-info, 0.3);
-  color: $edex-info;
+  gap: $space-3;
+  
+  .alert-icon {
+    flex-shrink: 0;
+  }
+  
+  &.alert-success {
+    background: rgba($status-success, 0.05);
+    border-color: rgba($status-success, 0.3);
+    color: $status-success;
+  }
+  
+  &.alert-error {
+    background: rgba($status-error, 0.05);
+    border-color: rgba($status-error, 0.3);
+    color: $status-error;
+  }
+  
+  &.alert-warning {
+    background: rgba($status-warning, 0.05);
+    border-color: rgba($status-warning, 0.3);
+    color: $status-warning;
+  }
+  
+  &.alert-info {
+    background: rgba($status-info, 0.05);
+    border-color: rgba($status-info, 0.3);
+    color: $status-info;
+  }
 }
 
 // ============================================
-// Stats
+// STATS
 // ============================================
 
-.edex-stat {
+.stat {
   text-align: center;
-}
-
-.edex-stat-value {
-  font-size: 1.875rem;
-  font-weight: 900;
-  color: $edex-text;
-  letter-spacing: -0.025em;
-}
-
-.edex-stat-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: $edex-text-muted;
-  margin-top: 0.25rem;
+  
+  .stat-value {
+    font-size: 1.75rem;
+    font-weight: 900;
+    color: $text-primary;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  
+  .stat-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: $text-muted;
+    margin-top: $space-1;
+  }
 }
 
 // ============================================
-// Rankings
+// RANKINGS
 // ============================================
 
-.edex-rank {
+.rank-badge {
+  @include flex-center;
   width: 2rem;
   height: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   font-size: 0.75rem;
   font-weight: 900;
-}
-
-.edex-rank-1 {
-  @extend .edex-rank;
-  color: $edex-gold;
-  border: 1px solid rgba($edex-gold, 0.3);
-  background-color: rgba($edex-gold, 0.1);
-}
-
-.edex-rank-2 {
-  @extend .edex-rank;
-  color: $edex-silver;
-  border: 1px solid rgba($edex-silver, 0.3);
-  background-color: rgba($edex-silver, 0.1);
-}
-
-.edex-rank-3 {
-  @extend .edex-rank;
-  color: $edex-bronze;
-  border: 1px solid rgba($edex-bronze, 0.3);
-  background-color: rgba($edex-bronze, 0.1);
+  border: 1px solid;
+  
+  &.rank-1 {
+    color: $rank-gold;
+    border-color: rgba($rank-gold, 0.4);
+    background: rgba($rank-gold, 0.1);
+    box-shadow: 0 0 12px rgba($rank-gold, 0.3);
+  }
+  
+  &.rank-2 {
+    color: $rank-silver;
+    border-color: rgba($rank-silver, 0.4);
+    background: rgba($rank-silver, 0.1);
+  }
+  
+  &.rank-3 {
+    color: $rank-bronze;
+    border-color: rgba($rank-bronze, 0.4);
+    background: rgba($rank-bronze, 0.1);
+  }
 }
 
 // ============================================
-// Navigation
+// NAVIGATION
 // ============================================
 
-.edex-nav-item {
+.nav-item {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  color: $edex-text-secondary;
+  gap: $space-3;
+  padding: $space-3 $space-4;
+  color: $text-secondary;
   border-left: 2px solid transparent;
-  transition: all $transition-base;
-
-  &:hover {
-    color: $edex-text;
-    background-color: rgba($edex-surface, 0.5);
-  }
-}
-
-.edex-nav-active {
-  background-color: rgba($edex-primary, 0.1);
-  color: $edex-primary;
-  border-left: 2px solid $edex-primary;
+  transition: all $duration-normal;
+  position: relative;
   
   &:hover {
-    background-color: rgba($edex-primary, 0.15);
+    color: $text-primary;
+    background: rgba($bg-elevated, 0.5);
+    
+    .nav-arrow {
+      transform: translateX(4px);
+      opacity: 1;
+    }
+  }
+  
+  &.active {
+    background: rgba($maroon, 0.1);
+    color: $maroon;
+    border-left-color: $maroon;
+    
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: $maroon;
+      box-shadow: 0 0 10px $maroon;
+    }
+  }
+  
+  .nav-icon {
+    width: 18px;
+    height: 18px;
+    opacity: 0.7;
+  }
+  
+  .nav-arrow {
+    margin-left: auto;
+    opacity: 0;
+    transition: all $duration-normal;
   }
 }
 
 // ============================================
-// Prose (Content)
+// PROSE (Content)
 // ============================================
 
-.edex-prose {
-  color: $edex-text-secondary;
+.prose {
+  color: $text-secondary;
   line-height: 1.7;
-
+  @include hacker-scrollbar;
+  
   h1, h2, h3 {
-    color: $edex-text;
+    color: $text-primary;
     font-weight: 700;
-    margin-top: 1.5rem;
-    margin-bottom: 0.75rem;
+    margin-top: $space-6;
+    margin-bottom: $space-3;
   }
-
+  
   p {
-    margin-bottom: 1rem;
+    margin-bottom: $space-4;
   }
-
+  
   code {
-    background-color: rgba($edex-surface, 0.8);
-    padding: 0.125rem 0.375rem;
-    border-radius: $radius-md;
-    color: $edex-cyan;
-    font-family: $font-mono;
+    background: rgba($bg-elevated, 0.8);
+    padding: 2px $space-2;
+    color: $terminal-green;
     font-size: 0.875rem;
+    border: 1px solid $border-dim;
   }
-
+  
   pre {
-    background-color: $edex-bg;
-    border: 1px solid $edex-border;
-    padding: 1rem;
-    font-family: $font-mono;
-    font-size: 0.875rem;
+    background: $bg-terminal;
+    border: 1px solid $border-default;
+    padding: $space-4;
+    font-size: 0.85rem;
     overflow-x: auto;
-    margin: 1rem 0;
+    margin: $space-4 0;
+    
+    code {
+      background: none;
+      padding: 0;
+      border: none;
+    }
   }
-
+  
   a {
-    color: $edex-cyan;
-
+    color: $cyan;
+    
     &:hover {
       text-decoration: underline;
     }
   }
-
+  
   ul, ol {
-    margin-left: 1.5rem;
-    margin-bottom: 1rem;
+    margin-left: $space-6;
+    margin-bottom: $space-4;
   }
-
+  
   li {
-    margin-bottom: 0.25rem;
+    margin-bottom: $space-1;
+    
+    &::marker {
+      color: $maroon;
+    }
   }
-
-  ul li {
-    list-style-type: disc;
-  }
-
-  ol li {
-    list-style-type: decimal;
-  }
-
+  
   blockquote {
-    border-left: 2px solid rgba($edex-cyan, 0.5);
-    padding-left: 1rem;
+    border-left: 2px solid $maroon;
+    padding-left: $space-4;
     font-style: italic;
-    color: $edex-text-muted;
+    color: $text-muted;
   }
 }
 
 // ============================================
-// Scrollbar
+// SCROLLBAR
 // ============================================
 
-.edex-scrollbar {
-  @include custom-scrollbar;
+.custom-scrollbar {
+  @include hacker-scrollbar;
 }
 
 // ============================================
-// Spinner
+// SPINNER
 // ============================================
 
-.edex-spinner {
+.spinner {
   animation: spin 1s linear infinite;
-  color: $edex-cyan;
+  color: $maroon;
 }
 
 // ============================================
-// Grid Background
+// GRID BACKGROUND
 // ============================================
 
-.edex-grid-bg {
+.grid-bg {
   background-image: 
-    linear-gradient(rgba($edex-cyan, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba($edex-cyan, 0.03) 1px, transparent 1px);
+    linear-gradient(rgba($terminal-green, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba($terminal-green, 0.02) 1px, transparent 1px);
   background-size: 40px 40px;
 }
 
 // ============================================
-// Animations
+// GLITCH TEXT
 // ============================================
 
-@keyframes glow {
-  from { opacity: 0.6; }
-  to { opacity: 1; }
+.glitch {
+  @include glitch-text;
 }
 
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+// ============================================
+// NEON TEXT
+// ============================================
+
+.neon-maroon {
+  @include neon-text($maroon);
 }
 
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+.neon-cyan {
+  @include neon-text($cyan);
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+.neon-green {
+  @include neon-text($terminal-green);
 }
 
-@keyframes slideInFromRight {
-  from { 
+// ============================================
+// TYPING CURSOR
+// ============================================
+
+.typing-cursor {
+  @include typing-cursor;
+}
+
+// ============================================
+// DATA STREAM EFFECT
+// ============================================
+
+.data-stream {
+  @include data-stream;
+}
+
+// ============================================
+// TERMINAL PROMPT
+// ============================================
+
+.terminal-prompt {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  font-family: $font-mono;
+  
+  .prompt-user {
+    color: $terminal-green;
+  }
+  
+  .prompt-at {
+    color: $text-muted;
+  }
+  
+  .prompt-host {
+    color: $cyan;
+  }
+  
+  .prompt-path {
+    color: $maroon;
+  }
+  
+  .prompt-symbol {
+    color: $text-secondary;
+  }
+}
+
+// ============================================
+// HEX VIEWER (decorative)
+// ============================================
+
+.hex-stream {
+  font-family: $font-mono;
+  font-size: 0.6rem;
+  color: rgba($terminal-green, 0.3);
+  line-height: 1.2;
+  overflow: hidden;
+  word-break: break-all;
+}
+
+// ============================================
+// PROGRESS BAR
+// ============================================
+
+.progress-bar {
+  height: 4px;
+  background: $border-dim;
+  overflow: hidden;
+  
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, $maroon-dim, $maroon);
+    transition: width $duration-slow;
+    box-shadow: 0 0 10px rgba($maroon, 0.5);
+  }
+}
+
+// ============================================
+// TOOLTIPS
+// ============================================
+
+.tooltip {
+  position: relative;
+  
+  &::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: $space-2 $space-3;
+    background: $bg-elevated;
+    border: 1px solid $border-default;
+    color: $text-primary;
+    font-size: 0.7rem;
+    white-space: nowrap;
     opacity: 0;
-    transform: translateX(1rem);
+    pointer-events: none;
+    transition: opacity $duration-normal;
+    z-index: $z-overlay;
   }
-  to { 
+  
+  &:hover::after {
     opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes zoomIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
   }
 }

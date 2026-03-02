@@ -1,11 +1,11 @@
 // ============================================
-// IHMS CTF EDEX Theme - Base Styles
+// IHMS CTF - HACKER TERMINAL BASE STYLES
 // ============================================
 
 @use 'variables' as *;
 @use 'mixins' as *;
 
-// Reset & Base
+// === RESET ===
 *,
 *::before,
 *::after {
@@ -21,89 +21,263 @@ html {
   text-rendering: optimizeLegibility;
 }
 
+// === BODY - THE TERMINAL ===
 body {
-  background-color: $edex-bg;
-  color: $edex-text;
+  background-color: $bg-void;
+  color: $text-primary;
   font-family: $font-mono;
   overflow: hidden;
-  background-image: 
-    radial-gradient(ellipse at 50% 0%, rgba($edex-cyan, 0.03) 0%, transparent 50%),
-    linear-gradient(180deg, $edex-bg 0%, $edex-bg-alt 100%);
   line-height: 1.6;
   min-height: 100vh;
-  user-select: auto; // Allow text selection by default
-
-  // Subtle scanline effect
-  &::before {
-    content: "";
-    display: block;
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(0, 0, 0, 0.03) 2px,
-      rgba(0, 0, 0, 0.03) 4px
-    );
-    z-index: 200;
-    pointer-events: none;
-    opacity: 0.5;
-  }
+  user-select: auto;
+  
+  // Deep space gradient
+  background-image: 
+    radial-gradient(ellipse at 50% 0%, rgba($maroon, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba($cyan, 0.03) 0%, transparent 40%),
+    linear-gradient(180deg, $bg-void 0%, $bg-terminal 100%);
 }
 
-// Selection
+// === SCANLINES OVERLAY ===
+#root::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, $scanline-opacity) 2px,
+    rgba(0, 0, 0, $scanline-opacity) 4px
+  );
+  pointer-events: none;
+  z-index: $z-scanlines;
+  opacity: 0.7;
+}
+
+// === MOVING SCANLINE ===
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba($terminal-green, 0.1),
+    transparent
+  );
+  animation: scan-down $scanline-speed linear infinite;
+  pointer-events: none;
+  z-index: $z-scanlines;
+}
+
+// === SELECTION ===
 ::selection {
-  background-color: rgba($edex-cyan, 0.3);
-  color: $edex-text;
+  background-color: rgba($maroon, 0.4);
+  color: $text-glow;
 }
 
-// Headings
+// === HEADINGS ===
 h1, h2, h3, h4, h5, h6 {
-  color: $edex-text;
+  color: $text-primary;
+  font-family: $font-mono;
   font-weight: 700;
   letter-spacing: -0.02em;
 }
 
-// Paragraphs
+// === PARAGRAPHS ===
 p {
-  color: $edex-text-secondary;
+  color: $text-secondary;
 }
 
-// Links
+// === LINKS ===
 a {
-  color: $edex-cyan;
+  color: $cyan;
   text-decoration: none;
-  transition: color $transition-base;
+  transition: all $duration-normal;
 
   &:hover {
-    color: $edex-cyan-bright;
+    color: $cyan-bright;
+    text-shadow: 0 0 10px rgba($cyan, 0.5);
   }
 }
 
-// Lists
+// === LISTS ===
 ul, ol {
   list-style: none;
 }
 
-// Buttons
+// === BUTTONS ===
 button {
-  font-family: inherit;
+  font-family: $font-mono;
   cursor: pointer;
   border: none;
   background: none;
 }
 
-// Inputs
+// === INPUTS ===
 input, textarea, select {
-  font-family: inherit;
+  font-family: $font-mono;
 }
 
-// Images
+// === IMAGES ===
 img {
   max-width: 100%;
   height: auto;
+}
+
+// === CODE ===
+code, pre {
+  font-family: $font-mono;
+}
+
+// === KEYFRAMES ===
+
+// Scanline moving down
+@keyframes scan-down {
+  0% { top: -4px; }
+  100% { top: 100vh; }
+}
+
+// Glitch effect 1
+@keyframes glitch-1 {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
+// Glitch effect 2
+@keyframes glitch-2 {
+  0% { transform: translate(0); }
+  20% { transform: translate(2px, -2px); }
+  40% { transform: translate(2px, 2px); }
+  60% { transform: translate(-2px, -2px); }
+  80% { transform: translate(-2px, 2px); }
+  100% { transform: translate(0); }
+}
+
+// CRT flicker
+@keyframes flicker {
+  0% { opacity: 0.97; }
+  50% { opacity: 1; }
+  100% { opacity: 0.98; }
+}
+
+// Blink cursor
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+// Pulse ring
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 0.4; }
+  100% { transform: scale(1.3); opacity: 0; }
+}
+
+// Data flow
+@keyframes data-flow {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 100vh; }
+}
+
+// Glow pulse
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+// Spin
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+// Pulse
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+// Fade in
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+// Slide in from right
+@keyframes slide-in-right {
+  from { 
+    opacity: 0;
+    transform: translateX(1rem);
+  }
+  to { 
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// Zoom in
+@keyframes zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// Terminal boot
+@keyframes terminal-boot {
+  0% { 
+    opacity: 0;
+    transform: translateY(20px);
+    filter: blur(10px);
+  }
+  100% { 
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+// Matrix rain effect
+@keyframes matrix-rain {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+// Text typing
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+// Border glow
+@keyframes border-glow {
+  0%, 100% { 
+    border-color: rgba($maroon, 0.3);
+    box-shadow: 0 0 5px rgba($maroon, 0.1);
+  }
+  50% { 
+    border-color: rgba($maroon, 0.6);
+    box-shadow: 0 0 15px rgba($maroon, 0.3);
+  }
+}
+
+// Status blink
+@keyframes status-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
 }

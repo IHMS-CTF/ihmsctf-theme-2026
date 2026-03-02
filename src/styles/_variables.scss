@@ -1,85 +1,99 @@
 // ============================================
-// IHMS CTF EDEX Theme - Variables
-// Inspired by edex-ui's TRON aesthetic
+// IHMS CTF - HACKER TERMINAL THEME
+// Movie-style hacker aesthetic with IHMS colors
 // ============================================
 
-// Primary Brand Colors
-$edex-bg: #0a0c10;
-$edex-bg-alt: #0d1117;
-$edex-surface: #161b22;
-$edex-border: #21262d;
+// === CORE BACKGROUND ===
+$bg-void: #000000;
+$bg-terminal: #050508;
+$bg-panel: #0a0c10;
+$bg-surface: #0f1115;
+$bg-elevated: #14171c;
 
-// TRON-inspired cyan accents (secondary)
-$edex-cyan: #58a6ff;
-$edex-cyan-bright: #79c0ff;
-$edex-cyan-dim: #388bfd;
+// === IHMS MAROON (PRIMARY) ===
+$maroon: #c9453a;
+$maroon-bright: #e85850;
+$maroon-glow: #ff4136;
+$maroon-dim: #8b2c25;
+$maroon-dark: #5a1f1a;
 
-// IHMS brand maroon (primary theme color)
-$edex-primary: #c9453a;
-$edex-primary-bright: #f85149;
-$edex-primary-dim: #8b2c25;
+// === TERMINAL GREEN (SECONDARY) ===
+$terminal-green: #00ff41;
+$terminal-green-dim: #00cc33;
+$terminal-green-glow: #39ff14;
 
-// Additional IHMS maroon variations for theming
-$edex-maroon: #c9453a;
-$edex-maroon-bright: #e85850;
-$edex-maroon-dark: #a03630;
+// === CYBER CYAN (ACCENT) ===
+$cyan: #00d4ff;
+$cyan-bright: #00ffff;
+$cyan-dim: #0099cc;
 
-// Text hierarchy
-$edex-text: #e6edf3;
-$edex-text-secondary: #8b949e;
-$edex-text-muted: #484f58;
+// === TEXT ===
+$text-primary: #e0e0e0;
+$text-secondary: #888888;
+$text-muted: #444444;
+$text-glow: #ffffff;
 
-// Status colors
-$edex-success: #3fb950;
-$edex-warning: #d29922;
-$edex-error: #f85149;
-$edex-info: #58a6ff;
+// === STATUS ===
+$status-success: #00ff41;
+$status-warning: #ffcc00;
+$status-error: #ff4136;
+$status-info: #00d4ff;
 
-// Ranking colors
-$edex-gold: #f0c14b;
-$edex-silver: #8b949e;
-$edex-bronze: #da8e66;
+// === RANKINGS ===
+$rank-gold: #ffd700;
+$rank-silver: #c0c0c0;
+$rank-bronze: #cd7f32;
 
-// Typography
-$font-mono: "JetBrains Mono", "Fira Code", "SF Mono", "Cascadia Code", "Consolas", monospace;
+// === BORDERS ===
+$border-dim: #1a1d22;
+$border-default: #252a30;
+$border-bright: #353a42;
+$border-glow: rgba($maroon, 0.5);
 
-// Spacing scale
-$spacing-xs: 0.25rem;   // 4px
-$spacing-sm: 0.5rem;    // 8px
-$spacing-md: 1rem;      // 16px
-$spacing-lg: 1.5rem;    // 24px
-$spacing-xl: 2rem;      // 32px
-$spacing-2xl: 3rem;     // 48px
+// === TYPOGRAPHY ===
+$font-mono: "JetBrains Mono", "Fira Code", "Source Code Pro", "Consolas", monospace;
+$font-display: "Orbitron", "Share Tech Mono", $font-mono;
 
-// Border radius
-$radius-sm: 2px;
-$radius-md: 4px;
-$radius-lg: 8px;
-$radius-full: 9999px;
+// === SPACING ===
+$space-1: 0.25rem;
+$space-2: 0.5rem;
+$space-3: 0.75rem;
+$space-4: 1rem;
+$space-5: 1.25rem;
+$space-6: 1.5rem;
+$space-8: 2rem;
+$space-10: 2.5rem;
+$space-12: 3rem;
 
-// Transitions
-$transition-fast: 150ms ease;
-$transition-base: 200ms ease;
-$transition-slow: 300ms ease;
+// === TIMING ===
+$duration-fast: 100ms;
+$duration-normal: 200ms;
+$duration-slow: 400ms;
+$duration-slower: 600ms;
 
-// Shadows
-$shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
-$shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.3);
-$shadow-panel: 0 0 0 1px rgba(88, 166, 255, 0.03), 0 8px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.02);
-$shadow-panel-maroon: 0 0 0 1px rgba(201, 69, 58, 0.05), 0 8px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.02);
+// === GLOWS ===
+$glow-maroon: 0 0 10px rgba($maroon, 0.5), 0 0 20px rgba($maroon, 0.3), 0 0 40px rgba($maroon, 0.1);
+$glow-maroon-intense: 0 0 10px rgba($maroon, 0.8), 0 0 30px rgba($maroon, 0.5), 0 0 60px rgba($maroon, 0.3);
+$glow-cyan: 0 0 10px rgba($cyan, 0.5), 0 0 20px rgba($cyan, 0.3);
+$glow-green: 0 0 10px rgba($terminal-green, 0.5), 0 0 20px rgba($terminal-green, 0.3);
+$glow-text: 0 0 10px currentColor;
 
-// Z-index scale
-$z-dropdown: 50;
-$z-sticky: 60;
-$z-fixed: 70;
-$z-modal-backdrop: 80;
-$z-modal: 90;
-$z-tooltip: 100;
+// === SCANLINES ===
+$scanline-opacity: 0.03;
+$scanline-speed: 8s;
 
-// Breakpoints
-$breakpoint-sm: 640px;
-$breakpoint-md: 768px;
-$breakpoint-lg: 1024px;
-$breakpoint-xl: 1280px;
-$breakpoint-2xl: 1536px;
+// === BREAKPOINTS ===
+$bp-sm: 640px;
+$bp-md: 768px;
+$bp-lg: 1024px;
+$bp-xl: 1280px;
+$bp-2xl: 1536px;
+
+// === Z-INDEX ===
+$z-base: 1;
+$z-widget: 10;
+$z-header: 20;
+$z-sidebar: 30;
+$z-overlay: 50;
+$z-modal: 100;
+$z-scanlines: 200;

@@ -23,18 +23,18 @@ ChartJS.register(
   Legend
 );
 
-// Chart colors matching our theme
+// Chart colors matching hacker terminal theme
 const CHART_COLORS = [
-  '#58a6ff', // cyan
-  '#c9453a', // primary
-  '#f0c14b', // gold
-  '#3fb950', // success
-  '#f85149', // error
-  '#8b949e', // silver
-  '#da8e66', // bronze
-  '#d29922', // warning
-  '#79c0ff', // cyan-bright
-  '#388bfd', // cyan-dim
+  '#c9453a', // maroon primary
+  '#00ff41', // terminal green
+  '#00d4ff', // cyan
+  '#ffd700', // gold
+  '#e85850', // maroon bright
+  '#00cc33', // green dim
+  '#00ffff', // cyan bright
+  '#ffcc00', // warning
+  '#c0c0c0', // silver
+  '#cd7f32', // bronze
 ];
 
 interface ScoreboardProps {
@@ -109,7 +109,7 @@ const Scoreboard: React.FC<ScoreboardProps> = ({ onNavigate }) => {
       legend: {
         position: 'bottom' as const,
         labels: {
-          color: '#8b949e',
+          color: '#888888',
           font: { family: 'JetBrains Mono, monospace', size: 11, weight: 500 as any },
           boxWidth: 12,
           padding: 20,
@@ -117,28 +117,28 @@ const Scoreboard: React.FC<ScoreboardProps> = ({ onNavigate }) => {
         }
       },
       tooltip: {
-        backgroundColor: '#161b22',
+        backgroundColor: '#0a0c10',
         titleFont: { family: 'JetBrains Mono, monospace', size: 12, weight: 600 as any },
         bodyFont: { family: 'JetBrains Mono, monospace', size: 11 },
-        borderColor: '#21262d',
+        borderColor: '#252a30',
         borderWidth: 1,
         padding: 12,
-        cornerRadius: 4,
+        cornerRadius: 0,
         displayColors: true,
       }
     },
     scales: {
       x: {
-        grid: { color: 'rgba(33, 38, 45, 0.8)' },
+        grid: { color: 'rgba(37, 42, 48, 0.6)' },
         ticks: { 
-          color: '#8b949e', 
+          color: '#888888', 
           font: { family: 'JetBrains Mono, monospace', size: 10 } 
         }
       },
       y: {
-        grid: { color: 'rgba(33, 38, 45, 0.8)' },
+        grid: { color: 'rgba(37, 42, 48, 0.6)' },
         ticks: { 
-          color: '#8b949e', 
+          color: '#888888', 
           font: { family: 'JetBrains Mono, monospace', size: 10 } 
         },
         beginAtZero: true
@@ -149,57 +149,58 @@ const Scoreboard: React.FC<ScoreboardProps> = ({ onNavigate }) => {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-full py-40">
-        <Loader2 className="h-12 w-auto text-edex-cyan animate-spin mb-4" />
-        <p className="text-edex-text-secondary font-medium">Loading scoreboard...</p>
+        <Loader2 className="h-12 w-12 text-maroon animate-spin mb-4" />
+        <p className="text-secondary font-medium">Loading scoreboard...</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="scoreboard-page animate-fade-in">
       {/* Header */}
-      <header>
-        <div className="edex-page-subtitle">
-          <TrendingUp className="h-4 w-auto" />
+      <header className="mb-8">
+        <div className="page-subtitle">
+          <TrendingUp className="h-4 w-4" />
           Live Rankings
         </div>
-        <h1 className="edex-page-title">
-          Score<span className="edex-page-title-accent">board</span>
+        <h1 className="page-title">
+          Score<span className="accent">board</span>
         </h1>
       </header>
 
       {scoreboard.length > 0 ? (
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
           {/* Progression Chart */}
-          <div className="edex-panel p-6 xl:col-span-2">
-            <div className="edex-section-header mb-4">
-              <TrendingUp className="h-4 w-auto text-edex-cyan" />
+          <div className="scoreboard-chart xl:col-span-2">
+            <div className="section-header mb-4">
+              <TrendingUp className="h-4 w-4 text-cyan" />
               <h3>Score Progression</h3>
+              <div className="header-line"></div>
             </div>
             <div className="chart-container">
               {chartData ? (
                 <Line data={chartData} options={chartOptions} />
               ) : (
                 <div className="h-full flex flex-col items-center justify-center text-center">
-                  <BarChart3 className="h-12 w-auto text-edex-text-muted mb-4 opacity-50" />
-                  <p className="text-sm text-edex-text-muted">No progression data available yet</p>
+                  <BarChart3 className="h-12 w-12 text-muted mb-4 opacity-50" />
+                  <p className="text-sm text-muted">No progression data available yet</p>
                 </div>
               )}
             </div>
           </div>
 
           {/* Leaderboard Table */}
-          <div className="edex-panel flex flex-col overflow-hidden">
-            <div className="p-4 border-b border-edex-border flex items-center justify-between">
-              <span className="text-sm font-semibold text-edex-text flex items-center gap-2">
-                <Users className="h-4 w-auto text-edex-cyan" />
+          <div className="scoreboard-table-wrapper">
+            <div className="table-header flex items-center justify-between">
+              <span className="table-title flex items-center gap-2">
+                <Users className="h-4 w-4 text-cyan" />
                 Rankings
               </span>
-              <span className="text-xs text-edex-text-muted">{scoreboard.length} teams</span>
+              <span className="text-xs text-muted">{scoreboard.length} teams</span>
             </div>
             
             <div className="scoreboard-table-container">
-              <table className="edex-table">
+              <table className="data-table">
                 <thead>
                   <tr>
                     <th className="w-16">Rank</th>
@@ -216,20 +217,20 @@ const Scoreboard: React.FC<ScoreboardProps> = ({ onNavigate }) => {
                     >
                       <td>
                         {index < 3 ? (
-                          <div className={`edex-rank-${index + 1}`}>
+                          <div className={`rank-badge rank-${index + 1}`}>
                             {index + 1}
                           </div>
                         ) : (
-                          <span className="text-edex-text-muted">#{index + 1}</span>
+                          <span className="text-muted">#{index + 1}</span>
                         )}
                       </td>
                       <td>
-                        <span className="font-medium text-edex-text hover:text-edex-cyan transition-colors">
+                        <span className="font-medium text-primary hover:text-cyan transition-colors">
                           {team.name}
                         </span>
                       </td>
                       <td className="text-right">
-                        <span className="font-bold text-edex-text">{team.score}</span>
+                        <span className="font-bold text-maroon">{team.score}</span>
                       </td>
                     </tr>
                   ))}
@@ -240,9 +241,9 @@ const Scoreboard: React.FC<ScoreboardProps> = ({ onNavigate }) => {
         </div>
       ) : (
         <div className="empty-state">
-          <Trophy className="h-16 w-auto text-edex-text-muted mb-6 opacity-50" />
-          <h3 className="text-xl font-semibold text-edex-text-secondary mb-2">No Data Yet</h3>
-          <p className="text-sm text-edex-text-muted">
+          <Trophy className="empty-icon h-16 w-16" />
+          <h3 className="empty-title">No Data Yet</h3>
+          <p className="empty-desc">
             The scoreboard will populate once teams start solving challenges.
           </p>
         </div>

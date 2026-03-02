@@ -25,8 +25,8 @@ const Teams: React.FC<TeamsProps> = ({ onNavigate }) => {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-full py-40">
-        <Loader2 className="h-12 w-12 text-edex-cyan animate-spin mb-4" />
-        <p className="text-edex-text-secondary font-medium">Loading teams...</p>
+        <Loader2 className="h-12 w-12 text-cyan animate-spin mb-4" />
+        <p className="text-secondary font-medium">Loading teams...</p>
       </div>
     );
   }
@@ -36,21 +36,21 @@ const Teams: React.FC<TeamsProps> = ({ onNavigate }) => {
       {/* Header */}
       <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <div className="edex-page-subtitle">
+          <div className="section-header mb-2">
             <Globe className="h-4 w-4" />
-            Organizations
+            <span>Organizations</span>
           </div>
-          <h1 className="edex-page-title">
-            Team<span className="edex-page-title-accent">s</span>
+          <h1 className="text-3xl font-bold text-primary">
+            Team<span className="text-maroon">s</span>
           </h1>
         </div>
 
         <div className="relative max-w-sm w-full">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-edex-text-muted" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted" />
           <input 
             type="text" 
             placeholder="Search teams..." 
-            className="edex-input pl-10"
+            className="input pl-10"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -63,21 +63,21 @@ const Teams: React.FC<TeamsProps> = ({ onNavigate }) => {
           <button 
             key={team.id} 
             onClick={() => onNavigate('team-profile', { id: team.id })}
-            className="edex-card group text-left"
+            className="terminal-panel p-4 group text-left"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4 min-w-0">
-                <div className="p-3 bg-edex-primary-10 border border-edex-primary-20 text-edex-primary group-hover:bg-edex-primary group-hover:text-white transition-colors flex-shrink-0">
+                <div className="p-3 bg-maroon/10 border border-maroon/20 text-maroon group-hover:bg-maroon group-hover:text-white transition-colors flex-shrink-0">
                   <TeamsIcon className="h-5 w-5" />
                 </div>
                 <div className="min-w-0">
-                  <h4 className="font-semibold text-edex-text truncate group-hover:text-edex-cyan transition-colors">
+                  <h4 className="font-semibold text-primary truncate group-hover:text-cyan transition-colors">
                     {team.name}
                   </h4>
-                  <p className="text-xs text-edex-text-muted">Team</p>
+                  <p className="text-xs text-muted">Team</p>
                 </div>
               </div>
-              <ChevronRight className="h-4 w-4 text-edex-text-muted group-hover:text-edex-cyan group-hover:translate-x-half transition-all flex-shrink-0" />
+              <ChevronRight className="h-4 w-4 text-muted group-hover:text-cyan group-hover:translate-x-0.5 transition-all flex-shrink-0" />
             </div>
           </button>
         ))}
@@ -85,8 +85,8 @@ const Teams: React.FC<TeamsProps> = ({ onNavigate }) => {
 
       {filteredTeams.length === 0 && (
         <div className="py-20 text-center">
-          <TeamsIcon className="h-12 w-12 text-edex-text-muted mx-auto mb-4 opacity-50" />
-          <p className="text-edex-text-muted">No teams found</p>
+          <TeamsIcon className="h-12 w-12 text-muted mx-auto mb-4 opacity-50" />
+          <p className="text-muted">No teams found</p>
         </div>
       )}
     </div>

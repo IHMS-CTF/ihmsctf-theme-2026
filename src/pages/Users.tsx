@@ -25,8 +25,8 @@ const Users: React.FC<UsersProps> = () => {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-full py-40">
-        <Loader2 className="h-12 w-12 text-edex-cyan animate-spin mb-4" />
-        <p className="text-edex-text-secondary font-medium">Loading users...</p>
+        <Loader2 className="h-12 w-12 text-cyan animate-spin mb-4" />
+        <p className="text-secondary font-medium">Loading users...</p>
       </div>
     );
   }
@@ -36,21 +36,21 @@ const Users: React.FC<UsersProps> = () => {
       {/* Header */}
       <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <div className="edex-page-subtitle">
+          <div className="section-header mb-2">
             <UsersIcon className="h-4 w-4" />
-            Participants
+            <span>Participants</span>
           </div>
-          <h1 className="edex-page-title">
-            User<span className="edex-page-title-accent">s</span>
+          <h1 className="text-3xl font-bold text-primary">
+            User<span className="text-maroon">s</span>
           </h1>
         </div>
 
         <div className="relative max-w-sm w-full">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-edex-text-muted" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted" />
           <input 
             type="text" 
             placeholder="Search users..." 
-            className="edex-input pl-10"
+            className="input pl-10"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -62,17 +62,17 @@ const Users: React.FC<UsersProps> = () => {
         {filteredUsers.map((user) => (
           <div 
             key={user.id} 
-            className="edex-card group"
+            className="terminal-panel p-4 group"
           >
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-edex-cyan-10 border border-edex-cyan-20 text-edex-cyan group-hover:bg-edex-cyan group-hover:text-edex-bg transition-colors">
+              <div className="p-3 bg-cyan/10 border border-cyan/20 text-cyan group-hover:bg-cyan group-hover:text-void transition-colors">
                 <User className="h-5 w-5" />
               </div>
               <div className="min-w-0">
-                <h4 className="font-semibold text-edex-text truncate group-hover:text-edex-cyan transition-colors">
+                <h4 className="font-semibold text-primary truncate group-hover:text-cyan transition-colors">
                   {user.name}
                 </h4>
-                <p className="text-xs text-edex-text-muted">Participant</p>
+                <p className="text-xs text-muted">Participant</p>
               </div>
             </div>
           </div>
@@ -81,8 +81,8 @@ const Users: React.FC<UsersProps> = () => {
 
       {filteredUsers.length === 0 && (
         <div className="py-20 text-center">
-          <UsersIcon className="h-12 w-12 text-edex-text-muted mx-auto mb-4 opacity-50" />
-          <p className="text-edex-text-muted">No users found</p>
+          <UsersIcon className="h-12 w-12 text-muted mx-auto mb-4 opacity-50" />
+          <p className="text-muted">No users found</p>
         </div>
       )}
     </div>

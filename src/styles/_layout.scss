@@ -1,11 +1,11 @@
 // ============================================
-// IHMS CTF EDEX Theme - Layout Styles
+// IHMS CTF - HACKER TERMINAL LAYOUT
 // ============================================
 
 @use 'variables' as *;
 @use 'mixins' as *;
 
-// Reset default Vite styles
+// Reset Vite defaults
 #root {
   max-width: none;
   margin: 0;
@@ -14,22 +14,39 @@
 }
 
 // ============================================
-// Header
+// MAIN GRID LAYOUT
+// ============================================
+
+.app-container {
+  display: grid;
+  height: 100vh;
+  width: 100vw;
+  grid-template-rows: auto 1fr auto;
+  grid-template-columns: 1fr;
+  overflow: hidden;
+  
+  @include lg {
+    grid-template-columns: auto 1fr auto;
+    grid-template-rows: auto 1fr auto;
+  }
+}
+
+// ============================================
+// HEADER
 // ============================================
 
 .header {
-  height: 3.5rem;
-  border-bottom: 1px solid $edex-border;
-  background-color: rgba($edex-surface, 0.8);
+  grid-column: 1 / -1;
+  height: 3rem;
+  @include flex-between;
+  padding: 0 $space-4;
+  background: rgba($bg-panel, 0.9);
+  border-bottom: 1px solid $border-default;
   backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 1rem;
-  z-index: 50;
   position: relative;
+  z-index: $z-header;
   
-  // Add subtle maroon accent line at bottom
+  // Maroon accent line
   &::after {
     content: "";
     position: absolute;
@@ -39,196 +56,343 @@
     height: 1px;
     background: linear-gradient(90deg, 
       transparent 0%, 
-      rgba($edex-primary, 0.3) 20%, 
-      rgba($edex-primary, 0.5) 50%, 
-      rgba($edex-primary, 0.3) 80%, 
+      rgba($maroon, 0.4) 25%, 
+      $maroon 50%, 
+      rgba($maroon, 0.4) 75%, 
       transparent 100%
     );
   }
-}
-
-.header-stats {
-  display: none;
-  align-items: center;
-  gap: 1rem;
-  font-size: 0.75rem;
-  color: $edex-text-muted;
-
-  @include lg {
+  
+  // Logo area
+  .header-logo {
     display: flex;
+    align-items: center;
+    gap: $space-3;
+    
+    .logo-icon {
+      width: 24px;
+      height: 24px;
+      color: $maroon;
+    }
+    
+    .logo-text {
+      font-family: $font-display;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: $text-primary;
+      
+      .logo-accent {
+        color: $maroon;
+      }
+    }
   }
-}
-
-.status-indicator {
-  display: none;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.375rem 0.75rem;
-  background-color: rgba($edex-success, 0.1);
-  border: 1px solid rgba($edex-success, 0.2);
-  border-radius: $radius-md;
-
-  @include sm {
+  
+  // Header stats (hidden on mobile)
+  .header-stats {
+    display: none;
+    align-items: center;
+    gap: $space-6;
+    font-size: 0.65rem;
+    color: $text-muted;
+    
+    @include lg {
+      display: flex;
+    }
+    
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: $space-2;
+      
+      .stat-value {
+        color: $terminal-green;
+        font-variant-numeric: tabular-nums;
+      }
+    }
+  }
+  
+  // User area
+  .header-user {
     display: flex;
-  }
-}
-
-.user-name {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: $edex-text-secondary;
-  display: none;
-
-  @include sm {
-    display: block;
-  }
-}
-
-.logout-btn {
-  padding: 0.5rem;
-  color: $edex-text-muted;
-  border-radius: $radius-md;
-  transition: all $transition-base;
-
-  &:hover {
-    color: $edex-text;
-    background-color: $edex-surface;
+    align-items: center;
+    gap: $space-4;
+    
+    .status-indicator {
+      display: none;
+      align-items: center;
+      gap: $space-2;
+      padding: $space-1 $space-3;
+      background: rgba($status-success, 0.1);
+      border: 1px solid rgba($status-success, 0.2);
+      font-size: 0.65rem;
+      color: $status-success;
+      
+      @include sm {
+        display: flex;
+      }
+    }
+    
+    .user-name {
+      display: none;
+      font-size: 0.8rem;
+      color: $text-secondary;
+      
+      @include sm {
+        display: block;
+      }
+    }
+    
+    .logout-btn {
+      padding: $space-2;
+      color: $text-muted;
+      transition: all $duration-normal;
+      
+      &:hover {
+        color: $status-error;
+      }
+    }
   }
 }
 
 // ============================================
-// Sidebars
+// LEFT SIDEBAR
 // ============================================
 
 .sidebar-left {
-  width: 14rem;
   display: none;
-  flex-direction: column;
-  border-right: 1px solid $edex-border;
-  background-color: $edex-bg-alt;
-
+  width: 14rem;
+  @include flex-col;
+  background: rgba($bg-panel, 0.6);
+  border-right: 1px solid $border-default;
+  overflow-y: auto;
+  @include hacker-scrollbar;
+  
   @include lg {
     display: flex;
   }
+  
+  // Navigation groups
+  .nav-group {
+    padding: $space-4 0;
+    
+    &:not(:last-child) {
+      border-bottom: 1px solid $border-dim;
+    }
+    
+    .nav-group-title {
+      padding: 0 $space-4 $space-2;
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: $text-muted;
+      
+      &::before {
+        content: ">";
+        color: $maroon;
+        margin-right: $space-2;
+      }
+    }
+  }
+  
+  // Sidebar footer
+  .sidebar-footer {
+    margin-top: auto;
+    padding: $space-4;
+    border-top: 1px solid $border-dim;
+    
+    .system-status {
+      font-size: 0.6rem;
+      color: $text-muted;
+      
+      .status-line {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: $space-1;
+        
+        .status-value {
+          color: $terminal-green;
+        }
+      }
+    }
+  }
 }
 
-.sidebar-right {
-  width: 18rem;
-  display: none;
-  flex-direction: column;
-  border-left: 1px solid $edex-border;
-  background-color: $edex-bg-alt;
+// ============================================
+// RIGHT SIDEBAR (Widgets)
+// ============================================
 
+.sidebar-right {
+  display: none;
+  width: 18rem;
+  @include flex-col;
+  background: rgba($bg-panel, 0.6);
+  border-left: 1px solid $border-default;
+  overflow-y: auto;
+  @include hacker-scrollbar;
+  
   @include xl {
     display: flex;
   }
-}
-
-.nav-group {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.space-y-6 > * + * {
-  margin-top: 1.5rem;
-}
-
-.space-y-2 > * + * {
-  margin-top: 0.5rem;
+  
+  // Widget container
+  .widget {
+    padding: $space-4;
+    border-bottom: 1px solid $border-dim;
+    
+    .widget-header {
+      @include flex-between;
+      margin-bottom: $space-3;
+      
+      .widget-title {
+        font-size: 0.6rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: $text-muted;
+        
+        &::before {
+          content: "[";
+          color: $maroon;
+        }
+        
+        &::after {
+          content: "]";
+          color: $maroon;
+        }
+      }
+      
+      .widget-action {
+        font-size: 0.6rem;
+        color: $cyan;
+        cursor: pointer;
+        
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+    
+    .widget-content {
+      font-size: 0.75rem;
+      color: $text-secondary;
+    }
+  }
 }
 
 // ============================================
-// Main Content
+// MAIN CONTENT
 // ============================================
 
 .main-content {
-  flex-grow: 1;
-  position: relative;
-  overflow: hidden;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  background-color: $edex-bg;
+  overflow: hidden;
+  background: $bg-terminal;
+  position: relative;
+  
+  // Content area
+  .content-area {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: $space-6;
+    @include hacker-scrollbar;
+    
+    @include md {
+      padding: $space-8;
+    }
+  }
 }
 
 // ============================================
-// Footer
+// FOOTER
 // ============================================
 
 .footer {
-  height: 2rem;
-  border-top: 1px solid $edex-border;
-  background-color: rgba($edex-surface, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 1rem;
-  font-size: 0.75rem;
-  color: $edex-text-muted;
-}
-
-.status-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: $edex-success;
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-.footer-version {
-  display: none;
-
-  @include sm {
-    display: inline;
+  grid-column: 1 / -1;
+  height: 1.75rem;
+  @include flex-between;
+  padding: 0 $space-4;
+  background: rgba($bg-panel, 0.8);
+  border-top: 1px solid $border-default;
+  font-size: 0.6rem;
+  color: $text-muted;
+  
+  .footer-left {
+    display: flex;
+    align-items: center;
+    gap: $space-4;
+    
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: $space-2;
+      
+      .status-dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: $status-success;
+        animation: glow-pulse 2s ease-in-out infinite;
+      }
+    }
   }
-}
-
-.footer-session {
-  display: none;
-
-  @include md {
-    display: inline;
+  
+  .footer-center {
+    display: none;
+    
+    @include md {
+      display: block;
+    }
   }
-}
-
-.footer-coords {
-  display: none;
-
-  @include sm {
-    display: inline;
+  
+  .footer-right {
+    display: flex;
+    align-items: center;
+    gap: $space-4;
+    font-variant-numeric: tabular-nums;
+    
+    .footer-item {
+      display: none;
+      
+      @include sm {
+        display: block;
+      }
+    }
   }
 }
 
 // ============================================
-// Mobile Menu
+// MOBILE MENU
 // ============================================
 
 .mobile-menu-btn {
   display: block;
   position: fixed;
-  bottom: 1.5rem;
-  right: 1.5rem;
-  z-index: 100;
-
+  bottom: $space-6;
+  right: $space-6;
+  z-index: $z-overlay;
+  
   @include lg {
     display: none;
   }
-}
-
-.mobile-fab {
-  width: 3.5rem;
-  height: 3.5rem;
-  background-color: $edex-primary;
-  color: white;
-  border-radius: 50%;
-  box-shadow: $shadow-lg;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform $transition-base;
-
-  &:active {
-    transform: scale(0.95);
+  
+  .mobile-fab {
+    @include flex-center;
+    width: 3.5rem;
+    height: 3.5rem;
+    background: $maroon;
+    color: $text-glow;
+    border-radius: 50%;
+    box-shadow: $glow-maroon-intense;
+    transition: transform $duration-normal;
+    
+    &:active {
+      transform: scale(0.95);
+    }
   }
 }
 
@@ -237,58 +401,65 @@
   flex-direction: column;
   position: fixed;
   inset: 0;
-  background-color: rgba($edex-bg, 0.95);
+  background: rgba($bg-void, 0.98);
   backdrop-filter: blur(12px);
-  z-index: 90;
-  padding: 1.5rem;
-  animation: fadeIn 0.2s ease-out;
-
+  z-index: $z-modal;
+  padding: $space-6;
+  animation: fade-in 0.2s ease-out;
+  
   @include lg {
     display: none;
   }
-}
-
-.mobile-menu-item {
-  text-align: left;
-  padding: 0.75rem 1rem;
-  color: $edex-text;
-  border-radius: $radius-md;
-  transition: background-color $transition-base;
-
-  &:hover {
-    background-color: $edex-surface;
+  
+  .mobile-menu-header {
+    @include flex-between;
+    margin-bottom: $space-8;
+    
+    .close-btn {
+      color: $text-muted;
+      padding: $space-2;
+      
+      &:hover {
+        color: $text-primary;
+      }
+    }
+  }
+  
+  .mobile-menu-nav {
+    flex: 1;
+    
+    .mobile-nav-item {
+      display: flex;
+      align-items: center;
+      gap: $space-3;
+      padding: $space-4;
+      color: $text-secondary;
+      font-size: 1rem;
+      border-bottom: 1px solid $border-dim;
+      transition: all $duration-normal;
+      
+      &:hover, &.active {
+        color: $maroon;
+        background: rgba($maroon, 0.1);
+      }
+    }
   }
 }
 
 // ============================================
-// Page Animations
+// UTILITY SPACING
 // ============================================
 
-.space-y-10 > * + * {
-  margin-top: 2.5rem;
-}
+.space-y-1 > * + * { margin-top: $space-1; }
+.space-y-2 > * + * { margin-top: $space-2; }
+.space-y-3 > * + * { margin-top: $space-3; }
+.space-y-4 > * + * { margin-top: $space-4; }
+.space-y-5 > * + * { margin-top: $space-5; }
+.space-y-6 > * + * { margin-top: $space-6; }
+.space-y-8 > * + * { margin-top: $space-8; }
+.space-y-10 > * + * { margin-top: $space-10; }
 
-.space-y-8 > * + * {
-  margin-top: 2rem;
-}
-
-.space-y-4 > * + * {
-  margin-top: 1rem;
-}
-
-.space-y-3 > * + * {
-  margin-top: 0.75rem;
-}
-
-.space-y-5 > * + * {
-  margin-top: 1.25rem;
-}
-
-.space-y-1 > * + * {
-  margin-top: 0.25rem;
-}
-
-// Spacing for flex children
-.space-x-0\.5 > * + * {
-  margin-left: 0.125rem;
-}
+.space-x-1 > * + * { margin-left: $space-1; }
+.space-x-2 > * + * { margin-left: $space-2; }
+.space-x-3 > * + * { margin-left: $space-3; }
+.space-x-4 > * + * { margin-left: $space-4; }
