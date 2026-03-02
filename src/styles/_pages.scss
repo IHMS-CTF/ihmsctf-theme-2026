@@ -203,17 +203,22 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  width: 100%;
+  max-width: 100%;
 }
 
 .challenges-layout {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: $space-6;
+  gap: $space-4;
   overflow: hidden;
+  width: 100%;
+  max-width: 100%;
   
   @include lg {
     flex-direction: row;
+    gap: $space-6;
   }
 }
 
@@ -221,11 +226,18 @@
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  gap: $space-4;
+  gap: $space-3;
+  max-height: 40vh; // Limit height on mobile to show challenge details
+  overflow: hidden;
+  
+  @include sm {
+    gap: $space-4;
+  }
   
   @include lg {
     width: 18rem;
     height: 100%;
+    max-height: none;
     overflow-y: auto;
     @include hacker-scrollbar;
   }
@@ -258,7 +270,7 @@
       cursor: pointer;
       transition: all $duration-normal;
       
-      &:hover {
+      &:hover, &:active {
         border-color: rgba($maroon, 0.5);
       }
       
@@ -277,6 +289,8 @@
     gap: $space-2;
     overflow-y: auto;
     @include hacker-scrollbar;
+    -webkit-overflow-scrolling: touch;
+    padding-right: $space-1; // Space for scrollbar
   }
 }
 
@@ -286,14 +300,14 @@
   cursor: pointer;
   transition: all $duration-normal;
   display: flex;
-  align-items: stretch;
+  align-items: center;
   justify-content: space-between;
   gap: $space-3;
   width: 100%;
-  height: 100%;
   text-align: left;
+  min-height: 52px; // Touch-friendly minimum height
   
-  &:hover {
+  &:hover, &:active {
     border-color: rgba($maroon, 0.4);
     background: rgba($maroon, 0.05);
   }
@@ -323,28 +337,41 @@
     justify-content: center;
     
     .challenge-name {
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 600;
       color: $text-primary;
       word-break: break-word;
       white-space: normal;
-      line-height: 1.2;
+      line-height: 1.3;
+      
+      @include sm {
+        font-size: 0.85rem;
+      }
     }
     
     .challenge-meta {
       display: flex;
-      gap: $space-3;
+      gap: $space-2;
       margin-top: $space-1;
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       color: $text-muted;
+      
+      @include sm {
+        gap: $space-3;
+        font-size: 0.7rem;
+      }
     }
   }
   
   .challenge-points {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 700;
     color: $maroon;
     white-space: nowrap;
+    
+    @include sm {
+      font-size: 0.8rem;
+    }
   }
 }
 
@@ -353,6 +380,7 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
+  min-height: 0;
   overflow: hidden;
 }
 
@@ -364,24 +392,44 @@
   overflow: hidden;
   
   .challenge-header {
-    padding: $space-6;
+    padding: $space-4;
     border-bottom: 1px solid $border-dim;
+    flex-shrink: 0;
+    
+    @include sm {
+      padding: $space-5;
+    }
+    
+    @include md {
+      padding: $space-6;
+    }
     
     .challenge-title-row {
       display: flex;
       flex-direction: column;
-      gap: $space-4;
+      gap: $space-3;
       
       @include md {
         flex-direction: row;
         align-items: flex-start;
         justify-content: space-between;
+        gap: $space-4;
       }
     }
     
     .challenge-title {
-      font-size: 1.5rem;
+      font-size: 1.125rem;
       font-weight: 900;
+      line-height: 1.2;
+      word-break: break-word;
+      
+      @include sm {
+        font-size: 1.25rem;
+      }
+      
+      @include md {
+        font-size: 1.5rem;
+      }
     }
     
     .challenge-badges {
@@ -389,16 +437,49 @@
       flex-wrap: wrap;
       gap: $space-2;
     }
+    
+    // Stats on mobile
+    .flex {
+      flex-wrap: wrap;
+      gap: $space-4;
+      
+      @include md {
+        flex-wrap: nowrap;
+        gap: $space-6;
+      }
+    }
+    
+    .stat {
+      .stat-value {
+        font-size: 1.25rem;
+        
+        @include md {
+          font-size: 1.75rem;
+        }
+      }
+    }
   }
   
   .challenge-body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: $space-6;
-    padding: $space-6;
+    gap: $space-4;
+    padding: $space-4;
     overflow-y: auto;
+    overflow-x: hidden;
     @include hacker-scrollbar;
+    -webkit-overflow-scrolling: touch;
+    
+    @include sm {
+      padding: $space-5;
+      gap: $space-5;
+    }
+    
+    @include md {
+      padding: $space-6;
+      gap: $space-6;
+    }
     
     .challenge-main-content {
       width: 100%;
@@ -409,6 +490,11 @@
   .challenge-description {
     .prose {
       max-width: none;
+      font-size: 0.875rem;
+      
+      @include md {
+        font-size: 1rem;
+      }
     }
   }
   
@@ -426,8 +512,9 @@
       border: 1px solid $border-dim;
       margin-bottom: $space-2;
       transition: all $duration-normal;
+      min-height: 48px; // Touch-friendly
       
-      &:hover {
+      &:hover, &:active {
         border-color: $cyan;
         
         .file-icon {
@@ -438,16 +525,29 @@
       .file-info {
         display: flex;
         align-items: center;
-        gap: $space-3;
+        gap: $space-2;
+        min-width: 0;
+        flex: 1;
+        overflow: hidden;
+        
+        @include sm {
+          gap: $space-3;
+        }
         
         .file-icon {
           color: $text-muted;
           transition: color $duration-normal;
+          flex-shrink: 0;
         }
         
         .file-name {
-          font-size: 0.8rem;
+          font-size: 0.75rem;
           color: $text-primary;
+          @include truncate;
+          
+          @include sm {
+            font-size: 0.8rem;
+          }
         }
       }
       
@@ -461,10 +561,20 @@
   .challenge-submit {
     .submit-form {
       display: flex;
+      flex-direction: column;
       gap: $space-3;
+      
+      @include sm {
+        flex-direction: row;
+      }
       
       input {
         flex: 1;
+        min-height: 48px; // Touch-friendly
+      }
+      
+      button {
+        min-height: 48px; // Touch-friendly
       }
     }
   }
@@ -474,25 +584,45 @@
   @include flex-center;
   flex-direction: column;
   height: 100%;
-  padding: $space-12;
+  padding: $space-8;
   text-align: center;
   border: 1px dashed $border-default;
   background: rgba($bg-surface, 0.3);
   
+  @include md {
+    padding: $space-12;
+  }
+  
   .empty-icon {
     color: $text-muted;
     margin-bottom: $space-4;
+    width: 48px;
+    height: 48px;
+    
+    @include md {
+      width: 64px;
+      height: 64px;
+    }
   }
   
   .empty-title {
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: $text-secondary;
     margin-bottom: $space-2;
+    
+    @include md {
+      font-size: 1rem;
+    }
   }
   
   .empty-desc {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: $text-muted;
+    max-width: 300px;
+    
+    @include md {
+      font-size: 0.8rem;
+    }
   }
 }
 
@@ -503,40 +633,80 @@
 .scoreboard-page {
   display: flex;
   flex-direction: column;
-  gap: $space-6;
+  gap: $space-4;
+  width: 100%;
+  max-width: 100%;
+  
+  @include sm {
+    gap: $space-6;
+  }
 }
 
 .scoreboard-chart {
   @include terminal-panel-glow;
-  padding: $space-6;
+  padding: $space-3;
+  width: 100%;
+  overflow: hidden;
+  
+  @include sm {
+    padding: $space-4;
+  }
+  
+  @include md {
+    padding: $space-6;
+  }
   
   .chart-container {
-    height: 400px;
+    height: 250px;
     position: relative;
+    width: 100%;
+    
+    @include sm {
+      height: 300px;
+    }
+    
+    @include md {
+      height: 400px;
+    }
   }
 }
 
 .scoreboard-table-wrapper {
   @include terminal-panel;
   overflow: hidden;
+  width: 100%;
   
   .table-header {
-    padding: $space-4 $space-6;
+    padding: $space-3 $space-4;
     border-bottom: 1px solid $border-dim;
     
+    @include sm {
+      padding: $space-4 $space-6;
+    }
+    
     .table-title {
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.15em;
       color: $text-muted;
+      
+      @include sm {
+        font-size: 0.7rem;
+      }
     }
   }
   
   .scoreboard-table-container {
-    max-height: 500px;
+    max-height: 400px;
     overflow-y: auto;
+    overflow-x: auto;
     @include hacker-scrollbar;
+    -webkit-overflow-scrolling: touch;
+    
+    @include md {
+      max-height: 500px;
+    }
   }
 }
 
@@ -546,10 +716,18 @@
 
 .users-page,
 .teams-page {
+  width: 100%;
+  max-width: 100%;
+  
   .search-bar {
-    margin-bottom: $space-6;
+    margin-bottom: $space-4;
     position: relative;
+    width: 100%;
     max-width: 400px;
+    
+    @include sm {
+      margin-bottom: $space-6;
+    }
     
     .search-icon {
       position: absolute;
@@ -562,6 +740,11 @@
     input {
       @include terminal-input;
       padding-left: $space-10;
+      min-height: 48px; // Touch-friendly
+      
+      @include md {
+        min-height: auto;
+      }
     }
   }
 }
@@ -569,11 +752,17 @@
 .user-card,
 .team-card {
   @include terminal-panel;
-  padding: $space-4;
+  padding: $space-3;
   display: flex;
   align-items: center;
-  gap: $space-4;
+  gap: $space-3;
   transition: all $duration-normal;
+  min-height: 64px; // Touch-friendly
+  
+  @include sm {
+    padding: $space-4;
+    gap: $space-4;
+  }
   
   &:hover {
     border-color: rgba($maroon, 0.4);

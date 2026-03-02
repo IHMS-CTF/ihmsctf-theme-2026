@@ -484,10 +484,25 @@ const App: React.FC = () => {
               <Trophy className="h-5 w-5 text-maroon" />
               <span className="font-display font-bold tracking-wide">IHMS<span className="text-maroon">CTF</span></span>
             </div>
-            <button onClick={() => setIsMenuOpen(false)} className="close-btn">
+            <button onClick={() => setIsMenuOpen(false)} className="close-btn" aria-label="Close menu">
               <X className="h-6 w-6" />
             </button>
           </div>
+          
+          {/* User info section for mobile */}
+          {user && (
+            <div className="mobile-user-info mb-4">
+              <div className="user-badge">
+                <div className="user-avatar">
+                  {user.name.charAt(0).toUpperCase()}
+                </div>
+                <div className="user-details">
+                  <div className="user-name">{user.name}</div>
+                  <div className="user-status">Online</div>
+                </div>
+              </div>
+            </div>
+          )}
           
           <nav className="mobile-menu-nav">
             <button onClick={() => navigate('home')} className={`mobile-nav-item ${activeView === 'home' ? 'active' : ''}`}>
@@ -519,6 +534,10 @@ const App: React.FC = () => {
             
             {user ? (
               <>
+                <button onClick={() => navigate('team-profile')} className={`mobile-nav-item ${activeView === 'team-profile' ? 'active' : ''}`}>
+                  <Shield className="h-5 w-5" />
+                  My Team
+                </button>
                 <button onClick={() => navigate('settings')} className={`mobile-nav-item ${activeView === 'settings' ? 'active' : ''}`}>
                   <SettingsIcon className="h-5 w-5" />
                   Settings
