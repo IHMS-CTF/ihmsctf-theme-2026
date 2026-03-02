@@ -69,11 +69,20 @@ class CTFdClient:
             # Extract nonce from the login page
             import re
 
+            # Try multiple patterns to find the nonce
             nonce_match = re.search(
-                r'name=["\']nonce["\'] value=["\']([^"\']+)["\']', response.text
+                r'<input[^>]+id=["\']nonce["\'][^>]+value=["\']([^"\']+)["\']',
+                response.text,
             )
             if not nonce_match:
+                # Try alternative pattern (value before id)
+                nonce_match = re.search(
+                    r'<input[^>]+name=["\']nonce["\'][^>]+value=["\']([^"\']+)["\']',
+                    response.text,
+                )
+            if not nonce_match:
                 logging.error("Could not extract nonce from login page")
+                logging.debug(f"Login page snippet: {response.text[:500]}")
                 return False, "Could not get CSRF nonce"
 
             nonce = nonce_match.group(1)
