@@ -45,8 +45,9 @@ class CTFdClient:
             response = self.session.get(urljoin(self.api, "csrf_token"))
             response.raise_for_status()
             data = response.json()
-            if data.get("success") and "data" in data:
-                csrf_token = data["data"]
+            # The API returns {'csrf_token': '...'} directly
+            if "csrf_token" in data:
+                csrf_token = data["csrf_token"]
                 # Set it in headers for API calls
                 self.session.headers.update({"Csrf-Token": csrf_token})
                 logging.info(f"Updated CSRF token: {csrf_token[:16]}...")
