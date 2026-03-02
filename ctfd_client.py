@@ -59,37 +59,70 @@ class CTFdClient:
         return None
 
     def login(self, username, password):
-        """Log in to CTFd using API."""
-        # Get initial CSRF token
-        nonce = self._get_csrf()
-        if not nonce:
-            return False, "Could not get CSRF token"
-
-        # Use the API login endpoint
-        url = urljoin(self.api, "login")
-        payload = {
-            "name": username,
-            "password": password,
-        }
-
+        """Log in to CTFd using web form login."""
         try:
-            response = self.session.post(url, json=payload)
+            # First, get the login page to retrieve the nonce
+            login_page_url = urljoin(self.host, "login")
+            response = self.session.get(login_page_url)
             response.raise_for_status()
-            data = response.json()
 
-            if data.get("success"):
+            # Extract nonce from the login page
+            import re
+
+            nonce_match = re.search(
+                r'name=["\']nonce["\'] value=["\']([^"\']+)["\']', response.text
+            )
+            if not nonce_match:
+                logging.error("Could not extract nonce from login page")
+                return False, "Could not get CSRF nonce"
+
+            nonce = nonce_match.group(1)
+            logging.info(f"Extracted nonce: {nonce[:16]}...")
+
+            # Submit login form with form-encoded data
+            login_url = urljoin(self.host, "login")
+            payload = {
+                "name": username,
+                "password": password,
+                "nonce": nonce,
+            }
+
+            response = self.session.post(
+                login_url,
+                data=payload,  # Use form-encoded data, not JSON
+                headers={
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Referer": login_page_url,
+                },
+                allow_redirects=False,  # Don't follow redirects automatically
+            )
+
+            # Check if login was successful
+            # CTFd redirects on successful login (302/303) or returns 200 with error
+            if response.status_code in [302, 303]:
+                # Successful login - follow redirect
+                redirect_url = response.headers.get("Location", "")
+                logging.info(
+                    f"Login successful for user: {username}, redirect: {redirect_url}"
+                )
                 # Refresh CSRF token after successful login
                 self._get_csrf()
-                logging.info(f"Login successful for user: {username}")
                 return True, "Login successful"
-            else:
-                message = (
-                    data.get("errors", ["Login failed"])[0]
-                    if "errors" in data
-                    else "Login failed"
+            elif response.status_code == 200:
+                # Login failed - extract error message
+                error_match = re.search(
+                    r'class=["\']alert[^"\']*["\'][^>]*>([^<]+)', response.text
                 )
+                if error_match:
+                    message = error_match.group(1).strip()
+                else:
+                    message = "Invalid username or password"
                 logging.warning(f"Login failed for {username}: {message}")
                 return False, message
+            else:
+                logging.error(f"Unexpected response status: {response.status_code}")
+                return False, f"Unexpected response: {response.status_code}"
+
         except Exception as e:
             logging.error(f"Login error: {e}")
             return False, f"Login failed: {str(e)}"
