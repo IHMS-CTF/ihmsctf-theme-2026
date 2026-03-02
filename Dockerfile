@@ -18,8 +18,9 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 COPY . .
 RUN mkdir -p /app/config \
     && chown -R ihms:ihms /app \
-    && chmod 755 /app/config
+    && chmod 755 /app/config \
 
+RUN npm install
 RUN npm run build
 
 EXPOSE 8000
