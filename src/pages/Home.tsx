@@ -12,7 +12,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
   }, []);
 
   return (
-    <div className="space-y-10 py-6 animate-fade-in">
+    <div className="space-y-10 animate-fade-in">
       
       {/* Hero Section */}
       <section className="edex-panel-accent p-10 relative overflow-hidden">
@@ -27,14 +27,14 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
               System Online
             </div>
             <h1 className="edex-page-title">
-              IHMS Cyber<br/>
-              <span className="edex-page-title-accent">Defense Exercise</span>
+              IHMS<br/>
+              <span className="edex-page-title-accent">Capture The Flag</span>
             </h1>
           </div>
           
           <p className="text-edex-text-secondary text-lg leading-relaxed max-w-xl">
-            Welcome to the Indian Hills Middle School Cybersecurity Training Platform. 
-            Test your skills, solve challenges, and compete with your peers.
+            Welcome to the Indian Hills Middle School CTF Competition. 
+            Test your skills, solve challenges, and compete for the top spot on the leaderboard.
           </p>
           
           <div className="flex flex-wrap gap-4 pt-4">

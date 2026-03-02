@@ -156,7 +156,7 @@ const Scoreboard: React.FC<ScoreboardProps> = ({ onNavigate }) => {
   }
 
   return (
-    <div className="space-y-8 animate-fade-in py-4">
+    <div className="space-y-8 animate-fade-in">
       {/* Header */}
       <header>
         <div className="edex-page-subtitle">

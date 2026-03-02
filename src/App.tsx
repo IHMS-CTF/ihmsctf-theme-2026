@@ -32,38 +32,26 @@ import Settings from './pages/Settings';
 import ChallengeDetail from './pages/ChallengeDetail';
 
 const Timer: React.FC = () => {
-  const [timeLeft, setTimeLeft] = useState("00:00:00");
+  const [currentTime, setCurrentTime] = useState("");
   
   useEffect(() => {
-    // Simulated end time: 48 hours from now for demo
-    const endTime = new Date();
-    endTime.setHours(endTime.getHours() + 48);
-    
-    const interval = setInterval(() => {
+    const updateTime = () => {
       const now = new Date();
-      const diff = endTime.getTime() - now.getTime();
-      
-      if (diff <= 0) {
-        setTimeLeft("FINISHED");
-        clearInterval(interval);
-        return;
-      }
-      
-      const hours = Math.floor(diff / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-      
-      setTimeLeft(
-        `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-      );
-    }, 1000);
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const seconds = now.getSeconds().toString().padStart(2, '0');
+      setCurrentTime(`${hours}:${minutes}:${seconds}`);
+    };
+    
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
     
     return () => clearInterval(interval);
   }, []);
   
   return (
     <span className="text-edex-cyan font-bold text-xl tabular-nums">
-      {timeLeft}
+      {currentTime}
     </span>
   );
 };
@@ -73,6 +61,7 @@ const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [stats, setStats] = useState({ cpu: 12, ram: 45, latency: 24 });
+  const [activityLog, setActivityLog] = useState<any[]>([]);
   
   // Single-route navigation state
   const [view, setView] = useState('home');
@@ -110,7 +99,7 @@ const App: React.FC = () => {
     window.addEventListener('popstate', syncStateWithUrl);
     
     // Simulate system stats
-    const interval = setInterval(() => {
+    const statsInterval = setInterval(() => {
       setStats({
         cpu: Math.floor(Math.random() * 20) + 5,
         ram: Math.floor(Math.random() * 10) + 40,
@@ -118,9 +107,28 @@ const App: React.FC = () => {
       });
     }, 3000);
 
+    // Fetch activity log (recent solves from scoreboard)
+    const fetchActivity = () => {
+      axios.get('/api/scoreboard')
+        .then(res => {
+          const teams = res.data || [];
+          const logs = teams.slice(0, 5).map((team: any, idx: number) => ({
+            type: idx === 0 ? 'solve' : 'info',
+            team: team.name,
+            score: team.score
+          }));
+          setActivityLog(logs);
+        })
+        .catch(() => setActivityLog([]));
+    };
+
+    fetchActivity();
+    const activityInterval = setInterval(fetchActivity, 30000); // Refresh every 30s
+
     return () => {
       window.removeEventListener('popstate', syncStateWithUrl);
-      clearInterval(interval);
+      clearInterval(statsInterval);
+      clearInterval(activityInterval);
     };
   }, []);
 
@@ -162,7 +170,7 @@ const App: React.FC = () => {
   }
 
   let activeView = view;
-  if (!user && !['home', 'login'].includes(view)) {
+  if (!user && !['home', 'login', 'scoreboard'].includes(view)) {
     activeView = 'login';
   }
 
@@ -260,10 +268,10 @@ const App: React.FC = () => {
             </div>
             <div className="nav-group">
               <NavItem icon={LayoutDashboard} label="Home" id="home" active={activeView === 'home'} />
+              <NavItem icon={BarChart3} label="Scoreboard" id="scoreboard" active={activeView === 'scoreboard'} />
               {user && (
                 <>
                   <NavItem icon={Target} label="Challenges" id="challenges" active={activeView === 'challenges'} />
-                  <NavItem icon={BarChart3} label="Scoreboard" id="scoreboard" active={activeView === 'scoreboard'} />
                   <NavItem icon={UsersIcon} label="Users" id="users" active={activeView === 'users'} />
                   <NavItem icon={Globe} label="Teams" id="teams" active={activeView === 'teams'} />
                 </>
@@ -297,7 +305,7 @@ const App: React.FC = () => {
         {/* Central Viewport */}
         <main className="main-content">
           <div className={`flex-grow overflow-y-auto edex-scrollbar ${activeView === 'challenges' ? 'p-2' : 'p-6'}`}>
-            <div className={`max-w-6xl mx-auto ${activeView === 'challenges' ? 'h-full' : ''}`}>
+            <div className={`mx-auto ${activeView === 'challenges' ? 'h-full max-w-7xl' : 'max-w-6xl'}`}>
               {renderView()}
             </div>
           </div>
@@ -306,39 +314,54 @@ const App: React.FC = () => {
         {/* Right Sidebar - Stats & Info */}
         <aside className="sidebar-right">
           <div className="p-4 space-y-6">
-            {/* Mission Clock */}
+            {/* Current Time */}
             <div className="edex-panel p-4">
               <div className="flex items-center gap-2 text-xs font-semibold text-edex-text-muted uppercase tracking-wider mb-3">
                 <Clock className="h-4 w-auto" />
-                Time Remaining
+                Current Time
               </div>
               <Timer />
-              <div className="text-xs text-edex-text-muted mt-1">Until competition ends</div>
+              <div className="text-xs text-edex-text-muted mt-1">Local time</div>
             </div>
 
             {/* System Log */}
             <div>
               <div className="flex items-center gap-2 text-xs font-semibold text-edex-text-muted uppercase tracking-wider mb-3">
                 <Activity className="h-4 w-auto" />
-                Activity Log
+                Activity Feed
               </div>
-              <div className="edex-panel bg-edex-bg p-3 h-52 overflow-hidden text-xs space-y-2">
-                <div className="flex gap-2">
-                  <span className="text-edex-success">[OK]</span>
-                  <span className="text-edex-text-secondary">System initialized</span>
-                </div>
-                <div className="flex gap-2">
-                  <span className="text-edex-cyan">[INFO]</span>
-                  <span className="text-edex-text-secondary">Connected to CTFd API</span>
-                </div>
-                <div className="flex gap-2">
-                  <span className="text-edex-success">[OK]</span>
-                  <span className="text-edex-text-secondary">Session active</span>
-                </div>
-                <div className="flex gap-2">
-                  <span className="text-edex-text-muted animate-pulse">_</span>
-                  <span className="text-edex-text-muted">Awaiting input...</span>
-                </div>
+              <div className="edex-panel bg-edex-bg p-3 h-52 overflow-y-auto edex-scrollbar text-xs space-y-2">
+                {activityLog.length > 0 ? (
+                  activityLog.map((log, idx) => (
+                    <div key={idx} className="flex gap-2">
+                      <span className={log.type === 'solve' ? 'text-edex-success' : 'text-edex-cyan'}>
+                        [{log.type === 'solve' ? 'SOLVE' : 'INFO'}]
+                      </span>
+                      <span className="text-edex-text-secondary truncate">
+                        {log.team}: {log.score} pts
+                      </span>
+                    </div>
+                  ))
+                ) : (
+                  <>
+                    <div className="flex gap-2">
+                      <span className="text-edex-success">[OK]</span>
+                      <span className="text-edex-text-secondary">System initialized</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <span className="text-edex-cyan">[INFO]</span>
+                      <span className="text-edex-text-secondary">Connected to CTFd API</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <span className="text-edex-success">[OK]</span>
+                      <span className="text-edex-text-secondary">Session active</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <span className="text-edex-text-muted animate-pulse">_</span>
+                      <span className="text-edex-text-muted">Awaiting data...</span>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 
@@ -358,7 +381,7 @@ const App: React.FC = () => {
           {/* Sidebar Footer */}
           <div className="mt-auto p-4 border-t border-edex-border">
             <p className="text-xs text-edex-text-muted leading-relaxed">
-              Indian Hills Middle School Cybersecurity Training Platform
+              Indian Hills Middle School CTF Competition Platform
             </p>
           </div>
         </aside>
@@ -369,7 +392,7 @@ const App: React.FC = () => {
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <div className="status-dot"></div>
-            <span>IHMS Cybersec</span>
+            <span>IHMS CTF</span>
           </div>
           <span className="footer-version">v1.4.0</span>
           <span className="footer-session">
@@ -399,13 +422,13 @@ const App: React.FC = () => {
             <button onClick={() => navigate('home')} className="mobile-menu-item">
               Home
             </button>
+            <button onClick={() => navigate('scoreboard')} className="mobile-menu-item">
+              Scoreboard
+            </button>
             {user && (
               <>
                 <button onClick={() => navigate('challenges')} className="mobile-menu-item">
                   Challenges
-                </button>
-                <button onClick={() => navigate('scoreboard')} className="mobile-menu-item">
-                  Scoreboard
                 </button>
               </>
             )}
