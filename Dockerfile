@@ -1,28 +1,46 @@
-FROM python:3.14
+# Stage 1: Build the frontend
+FROM node:20-slim AS frontend-builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
 
-ENV PYTHONUNBUFFERED=1
+# Stage 2: Final production image
+FROM python:3.14-slim
 WORKDIR /app
 
-RUN useradd -m -s /bin/bash ihms
-
-RUN apt-get update \
-    && apt-get install -y nodejs npm git \
+# Install only necessary runtime dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
+# Create a non-root user
+RUN useradd -m -s /bin/bash ihms
+
+# Install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+# Copy built frontend assets from Stage 1
+COPY --from=frontend-builder /app/dist ./dist
 
+# Copy backend code (excluding files in .dockerignore)
 COPY . .
+
+# Ensure proper permissions
 RUN mkdir -p /app/config \
     && chown -R ihms:ihms /app \
     && chmod 755 /app/config
 
-RUN npm install
-RUN npm run build
+# Environment variables for production
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    FLASK_ENV=production
 
 EXPOSE 8000
 
-ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+# Fix permissions on entrypoint just in case
+RUN chmod +x /app/docker-entrypoint.sh
+
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
