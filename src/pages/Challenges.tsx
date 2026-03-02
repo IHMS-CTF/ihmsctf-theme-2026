@@ -127,7 +127,7 @@ const Challenges: React.FC<ChallengesProps> = () => {
                   <div className="header-line"></div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2">
+                <div className="flex flex-col gap-2">
                   {categoryChallenges.map((challenge: any) => (
                     <button
                       key={challenge.id}
