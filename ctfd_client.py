@@ -237,3 +237,72 @@ class CTFdClient:
         """Fetch solves for a specific challenge."""
         data = self._safe_get_json(f"challenges/{challenge_id}/solves")
         return data.get("data", []) if data else []
+
+    # --- Container Management Methods (Docker Plugin) ---
+
+    def request_container(self, challenge_id):
+        """Request a new container or get existing one for a challenge."""
+        url = urljoin(self.api, "containers/request")
+        payload = {"challenge_id": challenge_id}
+        try:
+            response = self.session.post(url, json=payload)
+            if response.status_code == 200:
+                return response.json()
+            else:
+                logging.warning(
+                    f"Container request returned status {response.status_code}: {response.text[:200]}"
+                )
+                try:
+                    return response.json()
+                except Exception:
+                    return {
+                        "error": f"Request failed with status {response.status_code}"
+                    }
+        except Exception as e:
+            logging.error(f"Error requesting container: {e}")
+        return None
+
+    def get_container_info(self, challenge_id):
+        """Get info about running container for a challenge."""
+        data = self._safe_get_json(f"containers/info/{challenge_id}")
+        return data if data else None
+
+    def renew_container(self, challenge_id):
+        """Renew (extend) container expiration."""
+        url = urljoin(self.api, "containers/renew")
+        payload = {"challenge_id": challenge_id}
+        try:
+            response = self.session.post(url, json=payload)
+            if response.status_code == 200:
+                return response.json()
+            else:
+                logging.warning(
+                    f"Container renew returned status {response.status_code}: {response.text[:200]}"
+                )
+                try:
+                    return response.json()
+                except Exception:
+                    return {"error": f"Renew failed with status {response.status_code}"}
+        except Exception as e:
+            logging.error(f"Error renewing container: {e}")
+        return None
+
+    def stop_container(self, challenge_id):
+        """Stop running container for a challenge."""
+        url = urljoin(self.api, "containers/stop")
+        payload = {"challenge_id": challenge_id}
+        try:
+            response = self.session.post(url, json=payload)
+            if response.status_code == 200:
+                return response.json()
+            else:
+                logging.warning(
+                    f"Container stop returned status {response.status_code}: {response.text[:200]}"
+                )
+                try:
+                    return response.json()
+                except Exception:
+                    return {"error": f"Stop failed with status {response.status_code}"}
+        except Exception as e:
+            logging.error(f"Error stopping container: {e}")
+        return None

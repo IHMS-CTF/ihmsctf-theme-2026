@@ -15,12 +15,16 @@
 
 .hero-section {
   @include terminal-panel-glow;
-  padding: $space-8;
+  padding: $space-6;
   position: relative;
   overflow: hidden;
   
+  @include sm {
+    padding: $space-8;
+  }
+  
   @include md {
-    padding: $space-12;
+    padding: $space-10;
   }
   
   // Background decoration
@@ -45,17 +49,70 @@
   .hero-content {
     position: relative;
     z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: $space-6;
+    
+    @include md {
+      gap: $space-8;
+    }
+  }
+
+  .hero-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $space-4;
+    
+    @include sm {
+      flex-direction: row;
+      align-items: center;
+      gap: $space-6;
+    }
+  }
+
+  .hero-logo-img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    filter: drop-shadow($glow-maroon);
+    animation: float 6s ease-in-out infinite;
+    flex-shrink: 0;
+    
+    @include sm {
+      width: 100px;
+      height: 100px;
+    }
+    
+    @include md {
+      width: 120px;
+      height: 120px;
+    }
+  }
+
+  .hero-text {
+    text-align: center;
+    
+    @include sm {
+      text-align: left;
+    }
   }
   
   .hero-title {
     font-family: $font-display;
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: 900;
     letter-spacing: 0.05em;
     line-height: 1.1;
+    color: $text-primary;
+    margin-bottom: $space-2;
+    
+    @include sm {
+      font-size: 2.5rem;
+    }
     
     @include md {
-      font-size: 3.5rem;
+      font-size: 3rem;
     }
     
     .title-accent {
@@ -63,28 +120,34 @@
       text-shadow: $glow-maroon;
     }
   }
-
-  .hero-logo-img {
-    filter: drop-shadow($glow-maroon);
-    animation: float 6s ease-in-out infinite;
-  }
   
   .hero-subtitle {
-    margin-top: $space-4;
     color: $text-secondary;
-    font-size: 1rem;
-    max-width: 600px;
+    font-size: 0.9rem;
+    max-width: 500px;
+    line-height: 1.6;
+    text-align: center;
+    
+    @include sm {
+      font-size: 1rem;
+      text-align: left;
+    }
     
     @include md {
-      font-size: 1.125rem;
+      font-size: 1.1rem;
+      max-width: 550px;
     }
   }
   
   .hero-actions {
-    margin-top: $space-8;
     display: flex;
-    flex-wrap: wrap;
-    gap: $space-4;
+    flex-direction: column;
+    gap: $space-3;
+    
+    @include sm {
+      flex-direction: row;
+      gap: $space-4;
+    }
   }
 }
 

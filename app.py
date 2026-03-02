@@ -234,6 +234,100 @@ def api_config():
     return jsonify(config_data if config_data else {})
 
 
+# --- CONTAINER API ENDPOINTS ---
+
+
+@app.route("/api/containers/request", methods=["POST"])
+def api_container_request():
+    """Request a new container or get existing one for a challenge."""
+    client = get_ctf_client()
+    if not client:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    data = request.json or {}
+    challenge_id = data.get("challenge_id")
+
+    if not challenge_id:
+        return jsonify({"error": "challenge_id is required"}), 400
+
+    result = client.request_container(challenge_id)
+    save_client_cookies(client)
+
+    if result is None:
+        return jsonify({"error": "Failed to request container"}), 500
+
+    if "error" in result:
+        return jsonify(result), 400
+
+    return jsonify(result)
+
+
+@app.route("/api/containers/info/<int:challenge_id>")
+def api_container_info(challenge_id):
+    """Get info about running container for a challenge."""
+    client = get_ctf_client()
+    if not client:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    result = client.get_container_info(challenge_id)
+    save_client_cookies(client)
+
+    if result is None:
+        return jsonify({"status": "not_found"})
+
+    return jsonify(result)
+
+
+@app.route("/api/containers/renew", methods=["POST"])
+def api_container_renew():
+    """Renew (extend) container expiration."""
+    client = get_ctf_client()
+    if not client:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    data = request.json or {}
+    challenge_id = data.get("challenge_id")
+
+    if not challenge_id:
+        return jsonify({"error": "challenge_id is required"}), 400
+
+    result = client.renew_container(challenge_id)
+    save_client_cookies(client)
+
+    if result is None:
+        return jsonify({"error": "Failed to renew container"}), 500
+
+    if "error" in result:
+        return jsonify(result), 400
+
+    return jsonify(result)
+
+
+@app.route("/api/containers/stop", methods=["POST"])
+def api_container_stop():
+    """Stop running container."""
+    client = get_ctf_client()
+    if not client:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    data = request.json or {}
+    challenge_id = data.get("challenge_id")
+
+    if not challenge_id:
+        return jsonify({"error": "challenge_id is required"}), 400
+
+    result = client.stop_container(challenge_id)
+    save_client_cookies(client)
+
+    if result is None:
+        return jsonify({"error": "Failed to stop container"}), 500
+
+    if "error" in result:
+        return jsonify(result), 400
+
+    return jsonify(result)
+
+
 # --- SPA SERVING ---
 
 

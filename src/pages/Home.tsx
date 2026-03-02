@@ -19,18 +19,21 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
       <section className="hero-section">
         <div className="hero-bg-pattern"></div>
         
-        <div className="hero-content max-w-2xl space-y-6">
-          <div className="flex flex-col items-center sm:items-start gap-8">
-            <img src={logo} alt="IHMS CTF" className="hero-logo-img h-48 w-48 md:h-64 md:w-64 object-contain" />
-            <div className="text-center sm:text-left">
-              <div className="page-subtitle justify-center sm:justify-start">
+        <div className="hero-content">
+          <div className="hero-top">
+            <img src={logo} alt="IHMS CTF" className="hero-logo-img" />
+            <div className="hero-text">
+              <h1 className="hero-title">
+                IHMS <span className="title-accent">CTF</span>
+              </h1>
+              <div className="page-subtitle">
                 <div className="status-dot online"></div>
                 System Online
               </div>
             </div>
           </div>
           
-          <p className="hero-subtitle text-lg leading-relaxed max-w-xl">
+          <p className="hero-subtitle">
             Welcome to the Indian Hills Middle School CTF Competition. 
             Test your skills, solve challenges, and compete for the top spot on the leaderboard.
           </p>
