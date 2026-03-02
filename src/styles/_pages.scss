@@ -393,15 +393,16 @@
   
   .challenge-body {
     flex: 1;
-    display: grid;
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     gap: $space-6;
     padding: $space-6;
     overflow-y: auto;
     @include hacker-scrollbar;
     
-    @include xl {
-      grid-template-columns: 2fr 1fr;
+    .challenge-main-content {
+      width: 100%;
+      max-width: 100%;
     }
   }
   

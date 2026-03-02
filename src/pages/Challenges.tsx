@@ -191,98 +191,100 @@ const Challenges: React.FC<ChallengesProps> = () => {
 
               {/* Body */}
               <div className="challenge-body">
-                {/* Description */}
-                <div className="challenge-description">
-                  <div className="terminal-panel p-6">
-                    <h3 className="label mb-4">Description</h3>
-                    {detailsLoading ? (
-                      <div className="space-y-3">
-                        <div className="skeleton-line medium"></div>
-                        <div className="skeleton-line full"></div>
-                        <div className="skeleton-line short"></div>
+                {/* Description and Submission Column */}
+                <div className="challenge-main-content">
+                  <div className="challenge-description">
+                    <div className="terminal-panel p-6">
+                      <h3 className="label mb-4">Description</h3>
+                      {detailsLoading ? (
+                        <div className="space-y-3">
+                          <div className="skeleton-line medium"></div>
+                          <div className="skeleton-line full"></div>
+                          <div className="skeleton-line short"></div>
+                        </div>
+                      ) : (
+                        <div 
+                          className="prose max-w-none"
+                          dangerouslySetInnerHTML={{ __html: marked.parse(challengeDetails?.description || '') }}
+                        />
+                      )}
+                    </div>
+
+                    {challengeDetails?.files && challengeDetails.files.length > 0 && (
+                      <div className="terminal-panel p-6 challenge-files mt-6">
+                        <h3 className="label mb-4 flex items-center gap-2">
+                          <FileText className="h-4 w-4" />
+                          Resources
+                        </h3>
+                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                          {challengeDetails.files.map((file: string, i: number) => (
+                            <a 
+                              key={i} 
+                              href={file} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="file-item group"
+                            >
+                              <div className="file-info min-w-0 flex-1">
+                                <FileText className="file-icon h-4 w-4 flex-shrink-0" />
+                                <span className="file-name truncate block">{cleanFilename(file)}</span>
+                              </div>
+                              <ExternalLink className="h-4 w-4 text-muted group-hover:text-cyan flex-shrink-0" />
+                            </a>
+                          ))}
+                        </div>
                       </div>
-                    ) : (
-                      <div 
-                        className="prose"
-                        dangerouslySetInnerHTML={{ __html: marked.parse(challengeDetails?.description || '') }}
-                      />
                     )}
                   </div>
 
-                  {challengeDetails?.files && challengeDetails.files.length > 0 && (
-                    <div className="terminal-panel p-6 challenge-files">
+                  {/* Submission */}
+                  <div className="challenge-submission-row mt-6">
+                    <div className="terminal-panel-glow p-6 challenge-submit">
                       <h3 className="label mb-4 flex items-center gap-2">
-                        <FileText className="h-4 w-4" />
-                        Resources
+                        <Flag className="h-4 w-4" />
+                        Submit Flag
                       </h3>
-                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                        {challengeDetails.files.map((file: string, i: number) => (
-                          <a 
-                            key={i} 
-                            href={file} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="file-item group"
-                          >
-                            <div className="file-info">
-                              <FileText className="file-icon h-4 w-4" />
-                              <span className="file-name truncate">{cleanFilename(file)}</span>
-                            </div>
-                            <ExternalLink className="h-4 w-4 text-muted group-hover:text-cyan" />
-                          </a>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
+                      
+                      <form onSubmit={handleSubmit} className="submit-form flex flex-col sm:flex-row gap-4">
+                        <input 
+                          type="text" 
+                          placeholder="flag{...}" 
+                          className="input font-mono flex-1"
+                          value={submission}
+                          onChange={(e) => setSubmission(e.target.value)}
+                          disabled={submitting || selectedChallenge.solved_by_me}
+                        />
 
-                {/* Submission */}
-                <div className="challenge-sidebar">
-                  <div className="terminal-panel-glow p-6 challenge-submit">
-                    <h3 className="label mb-4 flex items-center gap-2">
-                      <Flag className="h-4 w-4" />
-                      Submit Flag
-                    </h3>
-                    
-                    <form onSubmit={handleSubmit} className="submit-form flex-col gap-4">
-                      <input 
-                        type="text" 
-                        placeholder="flag{...}" 
-                        className="input font-mono"
-                        value={submission}
-                        onChange={(e) => setSubmission(e.target.value)}
-                        disabled={submitting || selectedChallenge.solved_by_me}
-                      />
-
-                      <button 
-                        type="submit"
-                        disabled={submitting || selectedChallenge.solved_by_me || !submission}
-                        className={`w-full flex items-center justify-center gap-2 ${
-                          selectedChallenge.solved_by_me 
-                            ? 'btn-ghost cursor-not-allowed' 
-                            : 'btn-primary-solid'
-                        }`}
-                      >
-                        {selectedChallenge.solved_by_me ? (
-                          <>
-                            <CheckCircle className="h-4 w-4" />
-                            Already Solved
-                          </>
-                        ) : submitting ? (
-                          <>
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                            Submitting...
-                          </>
-                        ) : (
-                          <>
-                            <Flag className="h-4 w-4" />
-                            Submit
-                          </>
-                        )}
-                      </button>
+                        <button 
+                          type="submit"
+                          disabled={submitting || selectedChallenge.solved_by_me || !submission}
+                          className={`sm:w-auto px-8 flex items-center justify-center gap-2 ${
+                            selectedChallenge.solved_by_me 
+                              ? 'btn-ghost cursor-not-allowed' 
+                              : 'btn-primary-solid'
+                          }`}
+                        >
+                          {selectedChallenge.solved_by_me ? (
+                            <>
+                              <CheckCircle className="h-4 w-4" />
+                              Already Solved
+                            </>
+                          ) : submitting ? (
+                            <>
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                              Submitting...
+                            </>
+                          ) : (
+                            <>
+                              <Flag className="h-4 w-4" />
+                              Submit
+                            </>
+                          )}
+                        </button>
+                      </form>
 
                       {result && (
-                        <div className={`alert ${
+                        <div className={`alert mt-4 ${
                           result.data.status === 'correct' || result.data.status === 'already_solved'
                             ? 'alert-success' 
                             : 'alert-error'
@@ -297,7 +299,7 @@ const Challenges: React.FC<ChallengesProps> = () => {
                           </div>
                         </div>
                       )}
-                    </form>
+                    </div>
                   </div>
                 </div>
               </div>
