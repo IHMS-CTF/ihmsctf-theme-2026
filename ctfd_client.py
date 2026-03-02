@@ -9,11 +9,22 @@ class CTFdClient:
         self.host = host
         self.api = urljoin(self.host, "api/v1/")
         self.session = requests.Session()
-        # Common headers to look more like a browser
+        # Comprehensive browser-like headers (matching MCP client)
         self.session.headers.update(
             {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
-                "Accept": "application/json",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 OPR/127.0.0.0 (Edition ms_store_gx)",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+                "Accept-Language": "en-US,en;q=0.9",
+                "Cache-Control": "max-age=0",
+                "Priority": "u=0, i",
+                "Sec-Ch-Ua": '"Opera GX";v="127", "Chromium";v="143", "Not A(Brand";v="24"',
+                "Sec-Ch-Ua-Mobile": "?0",
+                "Sec-Ch-Ua-Platform": '"Windows"',
+                "Sec-Fetch-Dest": "document",
+                "Sec-Fetch-Mode": "navigate",
+                "Sec-Fetch-Site": "none",
+                "Sec-Fetch-User": "?1",
+                "Upgrade-Insecure-Requests": "1",
             }
         )
 
@@ -27,18 +38,17 @@ class CTFdClient:
             self.session.cookies.update(cookies)
 
     def _get_csrf(self):
-        """Fetch CSRF token from CTFd."""
+        """Fetch CSRF token from CTFd challenges page (like MCP client)."""
         try:
-            response = self.session.get(urljoin(self.host, "login"))
+            response = self.session.get(urljoin(self.host, "challenges"))
             response.raise_for_status()
-            # CTFd often puts the CSRF nonce in the HTML
+            # CTFd puts the CSRF nonce in the challenges page HTML
             match = re.search(r"'csrfNonce': \"([0-9a-f]{64})\"", response.text)
             if match:
-                return match.group(1)
-            # Fallback if it's in a different format
-            match = re.search(r'name="nonce" value="([0-9a-f]{64})"', response.text)
-            if match:
-                return match.group(1)
+                csrf_token = match.group(1)
+                # Set it in headers for API calls
+                self.session.headers.update({"Csrf-Token": csrf_token})
+                return csrf_token
         except Exception as e:
             logging.error(f"Error fetching CSRF: {e}")
         return None
@@ -59,25 +69,19 @@ class CTFdClient:
 
         try:
             response = self.session.post(url, data=payload)
-            # CTFd redirects on successful login
-            if response.status_code == 200 and "challenges" in response.url:
-                # Update session with new CSRF token for API calls
-                self._update_api_csrf()
-                return True, "Login successful"
+            response.raise_for_status()
+            # Refresh CSRF token after login (critical!)
+            self._get_csrf()
+            return True, "Login successful"
         except Exception as e:
             logging.error(f"Login error: {e}")
+            return False, f"Login failed: {e}"
 
         return False, "Login failed"
 
     def _update_api_csrf(self):
         """Update the session header with the latest CSRF token."""
-        try:
-            response = self.session.get(urljoin(self.host, "challenges"))
-            match = re.search(r"'csrfNonce': \"([0-9a-f]{64})\"", response.text)
-            if match:
-                self.session.headers.update({"Csrf-Token": match.group(1)})
-        except Exception as e:
-            logging.error(f"Error updating API CSRF: {e}")
+        self._get_csrf()
 
     def _safe_get_json(self, endpoint):
         """Safely fetch and parse JSON from an endpoint."""
