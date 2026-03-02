@@ -238,9 +238,6 @@ const App: React.FC = () => {
       <header className="header">
         <div className="header-logo" onClick={() => navigate('home')} style={{ cursor: 'pointer' }}>
           <img src={logo} alt="IHMS CTF Logo" className="logo-img" />
-          <span className="logo-text">
-            IHMS<span className="logo-accent">CTF</span>
-          </span>
         </div>
         
         {/* System Stats - desktop only */}

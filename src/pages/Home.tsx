@@ -20,17 +20,13 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
         <div className="hero-bg-pattern"></div>
         
         <div className="hero-content max-w-2xl space-y-6">
-          <div className="flex items-start gap-6">
-            <img src={logo} alt="IHMS CTF" className="hero-logo-img h-24 w-24 md:h-32 md:w-32 object-contain hidden sm:block" />
-            <div>
-              <div className="page-subtitle">
+          <div className="flex flex-col items-center sm:items-start gap-8">
+            <img src={logo} alt="IHMS CTF" className="hero-logo-img h-48 w-48 md:h-64 md:w-64 object-contain" />
+            <div className="text-center sm:text-left">
+              <div className="page-subtitle justify-center sm:justify-start">
                 <div className="status-dot online"></div>
                 System Online
               </div>
-              <h1 className="hero-title">
-                IHMS<br/>
-                <span className="title-accent">Capture The Flag</span>
-              </h1>
             </div>
           </div>
           
