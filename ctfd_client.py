@@ -1,5 +1,4 @@
 import requests
-import re
 from urllib.parse import urljoin
 import logging
 
@@ -36,48 +35,63 @@ class CTFdClient:
         """Restore session cookies from a dict."""
         if cookies:
             self.session.cookies.update(cookies)
+            # After restoring cookies, fetch CSRF token for API calls
+            logging.info(f"Restored cookies: {list(cookies.keys())}")
+            self._get_csrf()
 
     def _get_csrf(self):
-        """Fetch CSRF token from CTFd challenges page (like MCP client)."""
+        """Fetch CSRF token from CTFd API."""
         try:
-            response = self.session.get(urljoin(self.host, "challenges"))
+            response = self.session.get(urljoin(self.api, "csrf_token"))
             response.raise_for_status()
-            # CTFd puts the CSRF nonce in the challenges page HTML
-            match = re.search(r"'csrfNonce': \"([0-9a-f]{64})\"", response.text)
-            if match:
-                csrf_token = match.group(1)
+            data = response.json()
+            if data.get("success") and "data" in data:
+                csrf_token = data["data"]
                 # Set it in headers for API calls
                 self.session.headers.update({"Csrf-Token": csrf_token})
+                logging.info(f"Updated CSRF token: {csrf_token[:16]}...")
                 return csrf_token
+            else:
+                logging.warning(f"CSRF API returned unexpected response: {data}")
         except Exception as e:
             logging.error(f"Error fetching CSRF: {e}")
         return None
 
     def login(self, username, password):
-        """Log in to CTFd."""
+        """Log in to CTFd using API."""
+        # Get initial CSRF token
         nonce = self._get_csrf()
         if not nonce:
-            return False, "Could not find CSRF token"
+            return False, "Could not get CSRF token"
 
-        url = urljoin(self.host, "login")
+        # Use the API login endpoint
+        url = urljoin(self.api, "login")
         payload = {
             "name": username,
             "password": password,
-            "nonce": nonce,
-            "_submit": "Submit",
         }
 
         try:
-            response = self.session.post(url, data=payload)
+            response = self.session.post(url, json=payload)
             response.raise_for_status()
-            # Refresh CSRF token after login (critical!)
-            self._get_csrf()
-            return True, "Login successful"
+            data = response.json()
+
+            if data.get("success"):
+                # Refresh CSRF token after successful login
+                self._get_csrf()
+                logging.info(f"Login successful for user: {username}")
+                return True, "Login successful"
+            else:
+                message = (
+                    data.get("errors", ["Login failed"])[0]
+                    if "errors" in data
+                    else "Login failed"
+                )
+                logging.warning(f"Login failed for {username}: {message}")
+                return False, message
         except Exception as e:
             logging.error(f"Login error: {e}")
-            return False, f"Login failed: {e}"
-
-        return False, "Login failed"
+            return False, f"Login failed: {str(e)}"
 
     def _update_api_csrf(self):
         """Update the session header with the latest CSRF token."""
@@ -85,6 +99,7 @@ class CTFdClient:
 
     def _safe_get_json(self, endpoint):
         """Safely fetch and parse JSON from an endpoint."""
+        response = None
         try:
             url = urljoin(self.api, endpoint)
             response = self.session.get(url)
@@ -92,10 +107,12 @@ class CTFdClient:
                 return response.json()
             else:
                 logging.warning(
-                    f"Endpoint {endpoint} returned status {response.status_code}"
+                    f"Endpoint {endpoint} returned status {response.status_code}: {response.text[:200]}"
                 )
         except requests.exceptions.JSONDecodeError:
-            logging.error(f"Failed to decode JSON from {endpoint}")
+            logging.error(
+                f"Failed to decode JSON from {endpoint}. Response text: {response.text[:500] if response else 'No response'}"
+            )
         except Exception as e:
             logging.error(f"Error fetching {endpoint}: {e}")
         return None
