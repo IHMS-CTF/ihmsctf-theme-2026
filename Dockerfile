@@ -6,7 +6,7 @@ WORKDIR /app
 RUN useradd -m -s /bin/bash ihms
 
 RUN apt-get update \
-    && apt-get install -y nodejs git \
+    && apt-get install -y nodejs npm git \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
