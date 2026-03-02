@@ -66,7 +66,7 @@ class CTFdClient:
             return False, "Could not get CSRF token"
 
         # Use the API login endpoint
-        url = urljoin(self.host, "login")
+        url = urljoin(self.api, "login")
         payload = {
             "name": username,
             "password": password,
