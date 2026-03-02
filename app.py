@@ -1,6 +1,5 @@
 import os
 import tomllib
-import uuid
 from flask import (
     Flask,
     request,
@@ -11,6 +10,7 @@ from flask import (
     send_from_directory,
 )
 from flask_cors import CORS
+from flask_session import Session
 from ctfd_client import CTFdClient
 
 # Load configuration
@@ -33,20 +33,55 @@ app.secret_key = config.get(
     "secret_key", os.environ.get("SECRET_KEY", "dev-key-for-poc")
 )
 
+# Session configuration for production stability
+redis_url = os.environ.get("REDIS_URL")
+
+session_config = {
+    "SESSION_PERMANENT": False,
+    "SESSION_USE_SIGNER": True,
+    "SESSION_COOKIE_SAMESITE": os.environ.get("SESSION_COOKIE_SAMESITE", "Lax"),
+    "SESSION_COOKIE_SECURE": os.environ.get("SESSION_COOKIE_SECURE", "true").lower()
+    == "true",
+    "SESSION_COOKIE_HTTPONLY": True,
+}
+
+if redis_url:
+    session_config.update(
+        {
+            "SESSION_TYPE": "redis",
+            "SESSION_REDIS": redis_url,
+            "SESSION_KEY_PREFIX": "ihmsctf:",
+        }
+    )
+else:
+    session_config.update(
+        {
+            "SESSION_TYPE": "filesystem",
+            "SESSION_FILE_DIR": os.environ.get(
+                "SESSION_FILE_DIR", "/tmp/ihmsctf_sessions"
+            ),
+        }
+    )
+
+app.config.update(session_config)
+Session(app)
+
 # Configuration
 CTFD_HOST = config.get("host", os.environ.get("CTFD_HOST", "https://demo.ctfd.io"))
 DEBUG = config.get("debug", True)
 PORT = config.get("port", 5000)
 
-# Map to store CTFd sessions per Flask session
-ctf_sessions = {}
+if os.environ.get("FLASK_ENV") == "production":
+    DEBUG = False
 
 
 def get_ctf_client():
-    session_id = session.get("ctf_session_id")
-    if not session_id or session_id not in ctf_sessions:
+    cookies = session.get("ctf_cookies")
+    if not cookies:
         return None
-    return ctf_sessions[session_id]
+    client = CTFdClient(CTFD_HOST)
+    client.set_cookies(cookies)
+    return client
 
 
 # --- API ENDPOINTS ---
@@ -59,7 +94,7 @@ def api_user():
         return jsonify({"logged_in": False}), 401
     user_data = client.get_user()
     if not user_data:
-        session.pop("ctf_session_id", None)
+        session.pop("ctf_cookies", None)
         return jsonify({"logged_in": False}), 401
     return jsonify({"logged_in": True, "user": user_data})
 
@@ -74,10 +109,9 @@ def api_login():
     success, message = client.login(username, password)
 
     if success:
-        session_id = str(uuid.uuid4())
-        session["ctf_session_id"] = session_id
-        ctf_sessions[session_id] = client
+        session["ctf_cookies"] = client.get_cookies()
         user_data = client.get_user()
+        session["ctf_cookies"] = client.get_cookies()
         return jsonify({"success": True, "user": user_data})
     else:
         return jsonify({"success": False, "message": message}), 401
@@ -172,9 +206,7 @@ def api_config():
 
 @app.route("/api/logout", methods=["POST"])
 def api_logout():
-    session_id = session.pop("ctf_session_id", None)
-    if session_id:
-        ctf_sessions.pop(session_id, None)
+    session.pop("ctf_cookies", None)
     return jsonify({"success": True})
 
 

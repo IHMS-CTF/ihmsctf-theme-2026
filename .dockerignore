@@ -7,3 +7,4 @@ __pycache__
 Dockerfile
 .env
 config/settings.toml
+docker-compose.yml

@@ -3,16 +3,28 @@ import re
 from urllib.parse import urljoin
 import logging
 
+
 class CTFdClient:
     def __init__(self, host):
         self.host = host
         self.api = urljoin(self.host, "api/v1/")
         self.session = requests.Session()
         # Common headers to look more like a browser
-        self.session.headers.update({
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
-            "Accept": "application/json",
-        })
+        self.session.headers.update(
+            {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+                "Accept": "application/json",
+            }
+        )
+
+    def get_cookies(self):
+        """Return current session cookies as a dict."""
+        return self.session.cookies.get_dict()
+
+    def set_cookies(self, cookies):
+        """Restore session cookies from a dict."""
+        if cookies:
+            self.session.cookies.update(cookies)
 
     def _get_csrf(self):
         """Fetch CSRF token from CTFd."""
@@ -42,7 +54,7 @@ class CTFdClient:
             "name": username,
             "password": password,
             "nonce": nonce,
-            "_submit": "Submit"
+            "_submit": "Submit",
         }
 
         try:
@@ -54,7 +66,7 @@ class CTFdClient:
                 return True, "Login successful"
         except Exception as e:
             logging.error(f"Login error: {e}")
-        
+
         return False, "Login failed"
 
     def _update_api_csrf(self):
@@ -75,7 +87,9 @@ class CTFdClient:
             if response.status_code == 200:
                 return response.json()
             else:
-                logging.warning(f"Endpoint {endpoint} returned status {response.status_code}")
+                logging.warning(
+                    f"Endpoint {endpoint} returned status {response.status_code}"
+                )
         except requests.exceptions.JSONDecodeError:
             logging.error(f"Failed to decode JSON from {endpoint}")
         except Exception as e:
@@ -130,7 +144,7 @@ class CTFdClient:
         # We try to get it, but return empty dict if it fails.
         data = self._safe_get_json("configs")
         return data.get("data", {}) if data else {}
-    
+
     def get_user(self, user_id="me"):
         """Fetch current user profile."""
         data = self._safe_get_json(f"users/{user_id}")
@@ -139,10 +153,7 @@ class CTFdClient:
     def submit_flag(self, challenge_id, flag):
         """Submit a flag for a challenge."""
         url = urljoin(self.api, "challenges/attempt")
-        payload = {
-            "challenge_id": challenge_id,
-            "submission": flag
-        }
+        payload = {"challenge_id": challenge_id, "submission": flag}
         try:
             # We need to ensure the Csrf-Token header is set correctly
             # It should have been set during login or _update_api_csrf
@@ -150,7 +161,9 @@ class CTFdClient:
             if response.status_code == 200:
                 return response.json()
             else:
-                logging.warning(f"Flag submission returned status {response.status_code}")
+                logging.warning(
+                    f"Flag submission returned status {response.status_code}"
+                )
                 return response.json() if response.status_code == 400 else None
         except Exception as e:
             logging.error(f"Error submitting flag: {e}")
