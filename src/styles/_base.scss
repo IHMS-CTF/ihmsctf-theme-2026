@@ -1,0 +1,108 @@
+// ============================================
+// IHMS CTF EDEX Theme - Base Styles
+// ============================================
+
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// Reset & Base
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background-color: $edex-bg;
+  color: $edex-text;
+  font-family: $font-mono;
+  overflow: hidden;
+  background-image: 
+    radial-gradient(ellipse at 50% 0%, rgba($edex-cyan, 0.03) 0%, transparent 50%),
+    linear-gradient(180deg, $edex-bg 0%, $edex-bg-alt 100%);
+  line-height: 1.6;
+  min-height: 100vh;
+
+  // Subtle scanline effect
+  &::before {
+    content: "";
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.03) 2px,
+      rgba(0, 0, 0, 0.03) 4px
+    );
+    z-index: 200;
+    pointer-events: none;
+    opacity: 0.5;
+  }
+}
+
+// Selection
+::selection {
+  background-color: rgba($edex-cyan, 0.3);
+  color: $edex-text;
+}
+
+// Headings
+h1, h2, h3, h4, h5, h6 {
+  color: $edex-text;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+// Paragraphs
+p {
+  color: $edex-text-secondary;
+}
+
+// Links
+a {
+  color: $edex-cyan;
+  text-decoration: none;
+  transition: color $transition-base;
+
+  &:hover {
+    color: $edex-cyan-bright;
+  }
+}
+
+// Lists
+ul, ol {
+  list-style: none;
+}
+
+// Buttons
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+// Inputs
+input, textarea, select {
+  font-family: inherit;
+}
+
+// Images
+img {
+  max-width: 100%;
+  height: auto;
+}

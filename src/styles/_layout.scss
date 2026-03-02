@@ -1,0 +1,294 @@
+// ============================================
+// IHMS CTF EDEX Theme - Layout Styles
+// ============================================
+
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// Reset default Vite styles
+#root {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+// ============================================
+// Header
+// ============================================
+
+.header {
+  height: 3.5rem;
+  border-bottom: 1px solid $edex-border;
+  background-color: rgba($edex-surface, 0.8);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+  z-index: 50;
+  position: relative;
+  
+  // Add subtle maroon accent line at bottom
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, 
+      transparent 0%, 
+      rgba($edex-primary, 0.3) 20%, 
+      rgba($edex-primary, 0.5) 50%, 
+      rgba($edex-primary, 0.3) 80%, 
+      transparent 100%
+    );
+  }
+}
+
+.header-stats {
+  display: none;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.75rem;
+  color: $edex-text-muted;
+
+  @include lg {
+    display: flex;
+  }
+}
+
+.status-indicator {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  background-color: rgba($edex-success, 0.1);
+  border: 1px solid rgba($edex-success, 0.2);
+  border-radius: $radius-md;
+
+  @include sm {
+    display: flex;
+  }
+}
+
+.user-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: $edex-text-secondary;
+  display: none;
+
+  @include sm {
+    display: block;
+  }
+}
+
+.logout-btn {
+  padding: 0.5rem;
+  color: $edex-text-muted;
+  border-radius: $radius-md;
+  transition: all $transition-base;
+
+  &:hover {
+    color: $edex-text;
+    background-color: $edex-surface;
+  }
+}
+
+// ============================================
+// Sidebars
+// ============================================
+
+.sidebar-left {
+  width: 14rem;
+  display: none;
+  flex-direction: column;
+  border-right: 1px solid $edex-border;
+  background-color: $edex-bg-alt;
+
+  @include lg {
+    display: flex;
+  }
+}
+
+.sidebar-right {
+  width: 18rem;
+  display: none;
+  flex-direction: column;
+  border-left: 1px solid $edex-border;
+  background-color: $edex-bg-alt;
+
+  @include xl {
+    display: flex;
+  }
+}
+
+.nav-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.space-y-6 > * + * {
+  margin-top: 1.5rem;
+}
+
+.space-y-2 > * + * {
+  margin-top: 0.5rem;
+}
+
+// ============================================
+// Main Content
+// ============================================
+
+.main-content {
+  flex-grow: 1;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background-color: $edex-bg;
+}
+
+// ============================================
+// Footer
+// ============================================
+
+.footer {
+  height: 2rem;
+  border-top: 1px solid $edex-border;
+  background-color: rgba($edex-surface, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+  font-size: 0.75rem;
+  color: $edex-text-muted;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: $edex-success;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.footer-version {
+  display: none;
+
+  @include sm {
+    display: inline;
+  }
+}
+
+.footer-session {
+  display: none;
+
+  @include md {
+    display: inline;
+  }
+}
+
+.footer-coords {
+  display: none;
+
+  @include sm {
+    display: inline;
+  }
+}
+
+// ============================================
+// Mobile Menu
+// ============================================
+
+.mobile-menu-btn {
+  display: block;
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 100;
+
+  @include lg {
+    display: none;
+  }
+}
+
+.mobile-fab {
+  width: 3.5rem;
+  height: 3.5rem;
+  background-color: $edex-primary;
+  color: white;
+  border-radius: 50%;
+  box-shadow: $shadow-lg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform $transition-base;
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.mobile-menu {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  inset: 0;
+  background-color: rgba($edex-bg, 0.95);
+  backdrop-filter: blur(12px);
+  z-index: 90;
+  padding: 1.5rem;
+  animation: fadeIn 0.2s ease-out;
+
+  @include lg {
+    display: none;
+  }
+}
+
+.mobile-menu-item {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  color: $edex-text;
+  border-radius: $radius-md;
+  transition: background-color $transition-base;
+
+  &:hover {
+    background-color: $edex-surface;
+  }
+}
+
+// ============================================
+// Page Animations
+// ============================================
+
+.space-y-10 > * + * {
+  margin-top: 2.5rem;
+}
+
+.space-y-8 > * + * {
+  margin-top: 2rem;
+}
+
+.space-y-4 > * + * {
+  margin-top: 1rem;
+}
+
+.space-y-3 > * + * {
+  margin-top: 0.75rem;
+}
+
+.space-y-5 > * + * {
+  margin-top: 1.25rem;
+}
+
+.space-y-1 > * + * {
+  margin-top: 0.25rem;
+}
+
+// Spacing for flex children
+.space-x-0\.5 > * + * {
+  margin-left: 0.125rem;
+}

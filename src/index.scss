@@ -1,0 +1,22 @@
+// ============================================
+// IHMS CTF EDEX Theme - Main Entry Point
+// ============================================
+
+// 1. Variables & Mixins (no CSS output)
+@use 'styles/variables' as *;
+@use 'styles/mixins' as *;
+
+// 2. Base styles
+@use 'styles/base';
+
+// 3. Component classes
+@use 'styles/components';
+
+// 4. Utility classes
+@use 'styles/utilities';
+
+// 5. Layout styles
+@use 'styles/layout';
+
+// 6. Page-specific styles
+@use 'styles/pages';

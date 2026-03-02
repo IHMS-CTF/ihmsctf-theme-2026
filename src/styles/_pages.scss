@@ -1,0 +1,292 @@
+// ============================================
+// IHMS CTF EDEX Theme - Page-Specific Styles
+// ============================================
+
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// ============================================
+// Home Page
+// ============================================
+
+.hero-bg-icon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 1.5rem;
+  opacity: 0.1;
+}
+
+.feature-icon {
+  padding: 0.75rem;
+  background-color: rgba($edex-primary, 0.1);
+  border: 1px solid rgba($edex-primary, 0.2);
+  color: $edex-primary;
+  width: fit-content;
+  margin-bottom: 1.25rem;
+  transition: all $transition-base;
+  
+  &:hover {
+    background-color: rgba($edex-primary, 0.2);
+    border-color: rgba($edex-primary, 0.4);
+    box-shadow: 0 0 20px rgba($edex-primary, 0.2);
+  }
+}
+
+// ============================================
+// Login Page
+// ============================================
+
+.login-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background-color: rgba($edex-cyan, 0.1);
+  border: 1px solid rgba($edex-cyan, 0.2);
+  color: $edex-cyan;
+  margin-bottom: 1.5rem;
+}
+
+// ============================================
+// Challenges Page
+// ============================================
+
+.challenges-layout {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  overflow: hidden; // Prevent overflow
+
+  @include lg {
+    flex-direction: row;
+  }
+}
+
+.challenges-nav {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex-shrink: 0;
+  min-height: 0; // Fix for flex container
+
+  @include lg {
+    width: 18rem;
+    height: 100%;
+  }
+}
+
+.challenges-detail {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.challenge-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem;
+  border: 1px solid $edex-border;
+  background-color: rgba($edex-surface, 0.5);
+  text-align: left;
+  transition: all $transition-base;
+
+  &:hover {
+    border-color: rgba($edex-cyan, 0.3);
+  }
+
+  &.active {
+    background-color: rgba($edex-cyan, 0.1);
+    border-color: rgba($edex-cyan, 0.5);
+  }
+}
+
+.challenge-header {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  @include md {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+}
+
+.challenge-content {
+  flex-grow: 1;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  overflow: hidden;
+
+  @include xl {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+.challenge-description {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  @include custom-scrollbar;
+
+  @include xl {
+    grid-column: span 1;
+  }
+}
+
+.challenge-submission {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 1rem;
+  width: auto;
+  color: $edex-text-muted;
+}
+
+.file-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem;
+  background-color: $edex-bg;
+  border: 1px solid $edex-border;
+  transition: border-color $transition-base;
+
+  &:hover {
+    border-color: rgba($edex-cyan, 0.5);
+  }
+}
+
+.skeleton-line {
+  height: 1rem;
+  background-color: $edex-border;
+  border-radius: $radius-md;
+}
+
+.empty-state {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3rem;
+  border: 1px dashed $edex-border;
+  background-color: rgba($edex-surface, 0.2);
+}
+
+// ============================================
+// Scoreboard Page
+// ============================================
+
+.chart-container {
+  height: 400px;
+}
+
+.scoreboard-table-container {
+  overflow-y: auto;
+  flex-grow: 1;
+  max-height: 500px;
+  @include custom-scrollbar;
+}
+
+// ============================================
+// Users & Teams Pages
+// ============================================
+
+.user-card-icon {
+  padding: 0.75rem;
+  background-color: rgba($edex-cyan, 0.1);
+  border: 1px solid rgba($edex-cyan, 0.2);
+  color: $edex-cyan;
+  transition: all $transition-base;
+}
+
+.team-card-icon {
+  padding: 0.75rem;
+  background-color: rgba($edex-primary, 0.1);
+  border: 1px solid rgba($edex-primary, 0.2);
+  color: $edex-primary;
+  flex-shrink: 0;
+  transition: all $transition-base;
+}
+
+// ============================================
+// Team Profile Page
+// ============================================
+
+.profile-icon {
+  padding: 1.5rem;
+  background-color: $edex-surface;
+  border: 1px solid $edex-border;
+}
+
+.profile-bg-icon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 1.5rem;
+  opacity: 0.1;
+}
+
+.member-avatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background-color: $edex-surface;
+  border: 1px solid $edex-border;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: $edex-text-muted;
+}
+
+// ============================================
+// Settings Page
+// ============================================
+
+.settings-icon {
+  padding: 1.5rem;
+  background-color: $edex-surface;
+  border: 1px solid $edex-border;
+  display: inline-block;
+  margin-bottom: 1.5rem;
+}
+
+.security-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background-color: rgba($edex-success, 0.1);
+  border: 1px solid rgba($edex-success, 0.2);
+  border-radius: $radius-md;
+}
+
+.form-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 1rem;
+  width: auto;
+  color: $edex-text-muted;
+}

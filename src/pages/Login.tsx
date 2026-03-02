@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { LogIn, AlertCircle } from 'lucide-react';
+import { LogIn, AlertCircle, ShieldCheck, Lock, User } from 'lucide-react';
 
 interface LoginProps {
   onLogin: () => void;
@@ -34,55 +34,99 @@ const Login: React.FC<LoginProps> = ({ onLogin, onNavigate }) => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-20 p-10 bg-slate-900 border border-white/5 rounded-[2rem] shadow-2xl animate-in zoom-in-95 duration-500">
-      <div className="text-center mb-10">
-        <div className="inline-flex items-center justify-center p-4 bg-blue-600/10 border border-blue-500/20 rounded-2xl text-blue-500 mb-6">
-          <LogIn className="h-8 w-8" />
+    <div className="max-w-md mx-auto mt-12 animate-zoom-in">
+      <div className="edex-panel-accent p-8">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="login-icon">
+            <ShieldCheck className="h-10 w-auto" />
+          </div>
+          <h2 className="text-3xl font-bold text-edex-text mb-2">
+            Welcome Back
+          </h2>
+          <p className="text-edex-text-secondary">
+            Sign in to access the CTF platform
+          </p>
         </div>
-        <h2 className="text-3xl font-black text-white uppercase tracking-tight">Login</h2>
-        <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px] mt-2">Sign in to your CTFd account.</p>
+
+        {/* Error Alert */}
+        {error && (
+          <div className="edex-alert-error mb-6">
+            <AlertCircle className="h-5 w-auto flex-shrink-0" />
+            <div>
+              <p className="font-semibold text-sm">Authentication Failed</p>
+              <p className="text-xs opacity-80">{error}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Login Form */}
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="edex-label flex items-center justify-between" htmlFor="username">
+              <span>Username</span>
+              <User className="h-4 w-auto text-edex-text-muted" />
+            </label>
+            <input
+              className="edex-input"
+              id="username"
+              type="text"
+              placeholder="Enter your username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              autoComplete="username"
+            />
+          </div>
+
+          <div>
+            <label className="edex-label flex items-center justify-between" htmlFor="password">
+              <span>Password</span>
+              <Lock className="h-4 w-auto text-edex-text-muted" />
+            </label>
+            <input
+              className="edex-input"
+              id="password"
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              autoComplete="current-password"
+            />
+          </div>
+
+          <div className="pt-2">
+            <button
+              className={`w-full ${loading ? 'edex-btn-ghost cursor-wait' : 'edex-btn-primary'}`}
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  </svg>
+                  Signing in...
+                </>
+              ) : (
+                <>
+                  <LogIn className="h-4 w-auto" />
+                  Sign In
+                </>
+              )}
+            </button>
+          </div>
+        </form>
+
+        {/* Footer */}
+        <div className="mt-8 pt-6 border-t border-edex-border text-center">
+          <p className="text-xs text-edex-text-muted">
+            All login attempts are logged for security purposes
+          </p>
+        </div>
       </div>
-
-      {error && (
-        <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-4 mb-8 rounded-xl flex items-center space-x-3">
-          <AlertCircle className="h-5 w-5 flex-shrink-0" />
-          <p className="text-xs font-bold uppercase tracking-widest leading-relaxed">{error}</p>
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="space-y-2">
-          <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 px-1" htmlFor="username">Username</label>
-          <input
-            className="w-full bg-slate-950 border border-white/5 focus:border-blue-500 rounded-xl px-5 py-4 text-white placeholder-slate-700 outline-none transition-all font-bold tracking-widest"
-            id="username"
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 px-1" htmlFor="password">Password</label>
-          <input
-            className="w-full bg-slate-950 border border-white/5 focus:border-blue-500 rounded-xl px-5 py-4 text-white placeholder-slate-700 outline-none transition-all font-bold tracking-widest"
-            id="password"
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button
-          className={`w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl shadow-lg active:scale-95 transition-all flex items-center justify-center space-x-3 uppercase tracking-widest text-xs ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-          type="submit"
-          disabled={loading}
-        >
-          <span>{loading ? 'Logging in...' : 'Login'}</span>
-        </button>
-      </form>
     </div>
   );
 };

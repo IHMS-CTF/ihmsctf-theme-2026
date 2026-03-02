@@ -11,6 +11,8 @@ wheels/
 
 node_modules/
 dist/
-settings.toml
+config/settings.toml
 package-lock.json
 uv.lock
+config/
+.idea/

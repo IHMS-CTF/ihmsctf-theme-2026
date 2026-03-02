@@ -6,7 +6,7 @@ from flask_cors import CORS
 from ctfd_client import CTFdClient
 
 # Load configuration
-CONFIG_PATH = os.environ.get("SETTINGS_PATH", "settings.toml")
+CONFIG_PATH = os.environ.get("SETTINGS_PATH", "config/settings.toml")
 try:
     with open(CONFIG_PATH, "rb") as f:
         config = tomllib.load(f)
