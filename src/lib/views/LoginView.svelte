@@ -24,11 +24,8 @@
             const result = await login(username, password)
 
             if (result.success) {
-                successMessage = 'Login successful!'
-                // Optionally navigate based on result.redirect
-                if (result.redirect) {
-                    window.location.hash = `#/${result.redirect}`
-                }
+                successMessage = 'Login successful! Redirecting...'
+                window.location.hash = '#/home'
             } else {
                 errorMessage = result.error ?? 'Login failed'
             }

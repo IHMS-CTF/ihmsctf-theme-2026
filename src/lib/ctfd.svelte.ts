@@ -13,6 +13,11 @@ type LoginResponse = {
     redirect?: string
 }
 
+type MeResponse = {
+    success?: boolean
+    data?: { id?: number; name?: string }
+}
+
 interface CtfdState {
     isLoggedIn: boolean
     csrfToken?: string
@@ -82,6 +87,10 @@ export async function login(
 ): Promise<{ success: boolean; error?: string; redirect?: string }> {
     try {
         const csrfToken = await getCsrfToken()
+        if (!csrfToken) {
+            return { success: false, error: 'Failed to fetch CSRF token' }
+        }
+
         const formData = new URLSearchParams({
             name,
             password,
@@ -94,22 +103,45 @@ export async function login(
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
+                'CSRF-Token': csrfToken,
             },
             body: formData.toString(),
         })
 
-        const data = (await response.json()) as LoginResponse
+        const contentType = response.headers.get('content-type') ?? ''
 
-        if (!response.ok || data.success === false) {
-            const errorMsg = data.errors?.[0] ?? data.message ?? 'Login failed'
-            return { success: false, error: errorMsg }
+        if (contentType.includes('application/json')) {
+            const data = (await response.json()) as LoginResponse
+            if (!response.ok || data.success === false) {
+                const errorMsg = data.errors?.[0] ?? data.message ?? 'Login failed'
+                return { success: false, error: errorMsg }
+            }
+        } else if (!response.ok && response.status !== 302) {
+            return { success: false, error: `Login failed (${response.status})` }
+        }
+
+        const meResponse = await fetch('/api/v1/users/me', {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'CSRF-Token': csrfToken,
+            },
+        })
+
+        if (!meResponse.ok) {
+            return { success: false, error: 'Login failed to establish session' }
+        }
+
+        const meData = (await meResponse.json()) as MeResponse
+        if (!meData.success || !meData.data?.id) {
+            return { success: false, error: 'Login session verification failed' }
         }
 
         // Refresh CSRF token after successful login
         await refreshCsrfToken()
         setIsLoggedIn(true)
 
-        return { success: true, redirect: data.redirect }
+        return { success: true }
     } catch (error) {
         const errorMsg = error instanceof Error ? error.message : 'Login failed'
         return { success: false, error: errorMsg }

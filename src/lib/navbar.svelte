@@ -1,12 +1,28 @@
 <script lang="ts">
+  import { logout, state } from '$lib/ctfd.svelte'
+
   export let items: Array<{ key: string; label: string }> = []
   export let activeView = ''
   export let onNavigate: (view: string) => void = () => {}
+
+  const loginViewKey = 'login'
+
+  $: navItems = items.filter((item) => item.key !== loginViewKey)
 
   const navigateHome = () => {
     if (items.length > 0) {
       onNavigate(items[0].key)
     }
+  }
+
+  const handleAuthAction = async () => {
+    if (state.isLoggedIn) {
+      await logout()
+      onNavigate('home')
+      return
+    }
+
+    onNavigate(loginViewKey)
   }
 </script>
 
@@ -20,8 +36,9 @@
       ihmsctf
     </button>
 
-    <div class="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 p-1">
-      {#each items as item}
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 p-1">
+      {#each navItems as item}
         <button
           type="button"
           on:click={() => onNavigate(item.key)}
@@ -34,6 +51,19 @@
           {item.label}
         </button>
       {/each}
+      </div>
+
+      <button
+        type="button"
+        on:click={handleAuthAction}
+        class={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+          state.isLoggedIn
+            ? 'bg-rose-100 text-rose-700 hover:bg-rose-200'
+            : 'bg-blue-600 text-white hover:bg-blue-700'
+        }`}
+      >
+        {state.isLoggedIn ? 'Logout' : 'Login'}
+      </button>
     </div>
   </div>
 </nav>
