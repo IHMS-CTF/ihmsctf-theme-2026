@@ -1,0 +1,63 @@
+# Caddyfile for serving frontend theme + CTFd on the same origin
+# This avoids CORS issues by proxying both through the same domain
+
+ihmsctf.com {
+    # API routes -> proxy to CTFd
+    handle /api/* {
+        reverse_proxy ctfd:8000
+    }
+
+    # Auth routes -> proxy to CTFd
+    handle /login {
+        reverse_proxy ctfd:8000
+    }
+
+    handle /logout {
+        reverse_proxy ctfd:8000
+    }
+
+    handle /register {
+        reverse_proxy ctfd:8000
+    }
+
+    handle /confirm* {
+        reverse_proxy ctfd:8000
+    }
+
+    handle /reset_password* {
+        reverse_proxy ctfd:8000
+    }
+
+    handle /oauth* {
+        reverse_proxy ctfd:8000
+    }
+
+    # CTFd static files (themes, uploads, etc.)
+    handle /themes/* {
+        reverse_proxy ctfd:8000
+    }
+
+    handle /files/* {
+        reverse_proxy ctfd:8000
+    }
+
+    handle /plugins/* {
+        reverse_proxy ctfd:8000
+    }
+
+    # Admin panel -> proxy to CTFd
+    handle /admin/* {
+        reverse_proxy ctfd:8000
+    }
+
+    handle /setup* {
+        reverse_proxy ctfd:8000
+    }
+
+    # Everything else -> serve frontend
+    handle {
+        root * /srv/frontend
+        try_files {path} /index.html
+        file_server
+    }
+}
