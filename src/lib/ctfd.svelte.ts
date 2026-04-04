@@ -82,15 +82,20 @@ export async function login(
 ): Promise<{ success: boolean; error?: string; redirect?: string }> {
     try {
         const csrfToken = await getCsrfToken()
+        const formData = new URLSearchParams({
+            name,
+            password,
+            _submit: 'Submit',
+            nonce: csrfToken,
+        })
 
         const response = await fetch('/login', {
             method: 'POST',
             credentials: 'include',
             headers: {
-                'Content-Type': 'application/json',
-                'CSRF-Token': csrfToken,
+                'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: JSON.stringify({ name, password }),
+            body: formData.toString(),
         })
 
         const data = (await response.json()) as LoginResponse

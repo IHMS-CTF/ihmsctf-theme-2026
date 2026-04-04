@@ -4,54 +4,54 @@
 ihmsctf.com {
     # API routes -> proxy to CTFd
     handle /api/* {
-        reverse_proxy ctfd:8000
+        reverse_proxy 192.168.86.42:80
     }
 
     # Auth routes -> proxy to CTFd
     handle /login {
-        reverse_proxy ctfd:8000
+        reverse_proxy 192.168.86.42:80
     }
 
     handle /logout {
-        reverse_proxy ctfd:8000
+        reverse_proxy 192.168.86.42:80
     }
 
     handle /register {
-        reverse_proxy ctfd:8000
+        reverse_proxy 192.168.86.42:80
     }
 
     handle /confirm* {
-        reverse_proxy ctfd:8000
+        reverse_proxy 192.168.86.42:80
     }
 
     handle /reset_password* {
-        reverse_proxy ctfd:8000
+        reverse_proxy 192.168.86.42:80
     }
 
     handle /oauth* {
-        reverse_proxy ctfd:8000
+        reverse_proxy 192.168.86.42:80
     }
 
     # CTFd static files (themes, uploads, etc.)
     handle /themes/* {
-        reverse_proxy ctfd:8000
+        reverse_proxy 192.168.86.42:80
     }
 
     handle /files/* {
-        reverse_proxy ctfd:8000
+        reverse_proxy 192.168.86.42:80
     }
 
     handle /plugins/* {
-        reverse_proxy ctfd:8000
+        reverse_proxy 192.168.86.42:80
     }
 
     # Admin panel -> proxy to CTFd
     handle /admin/* {
-        reverse_proxy ctfd:8000
+        reverse_proxy 192.168.86.42:80
     }
 
     handle /setup* {
-        reverse_proxy ctfd:8000
+        reverse_proxy 192.168.86.42:80
     }
 
     # Everything else -> serve frontend
