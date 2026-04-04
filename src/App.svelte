@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { fade } from 'svelte/transition'
   import { onMount } from 'svelte'
   import Navbar from '$lib/navbar.svelte'
   import { defaultView, getViewByKey, views } from '$lib/views'
@@ -49,12 +50,14 @@
   $: activeViewConfig = getViewByKey(activeView) ?? views[0]
 </script>
 
-<div class="min-h-screen bg-gradient-to-b from-sky-50 via-white to-slate-100 text-slate-900">
+<div class="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-100">
   <Navbar items={views} activeView={activeView} onNavigate={navigateToView} />
 
   <main class="mx-auto max-w-5xl px-4 py-10 sm:px-6">
     {#if activeViewConfig}
-      <svelte:component this={activeViewConfig.component} />
+      <div in:fade={{ duration: 180 }} out:fade={{ duration: 140 }}>
+        <svelte:component this={activeViewConfig.component} />
+      </div>
     {/if}
   </main>
 </div>

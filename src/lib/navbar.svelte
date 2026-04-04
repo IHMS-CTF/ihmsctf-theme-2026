@@ -26,26 +26,26 @@
   }
 </script>
 
-<nav class="sticky top-0 z-10 border-b border-slate-200/70 bg-white/85 backdrop-blur">
+<nav class="sticky top-0 z-10 border-b border-slate-700/80 bg-slate-950/80 backdrop-blur">
   <div class="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
     <button
       type="button"
-      class="text-lg font-semibold tracking-tight text-slate-900"
-      on:click={navigateHome}
+      class="text-lg font-semibold tracking-tight text-slate-100 transition-colors hover:text-slate-300"
+      onclick={navigateHome}
     >
       ihmsctf
     </button>
 
     <div class="flex items-center gap-3">
-      <div class="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 p-1">
+      <div class="flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/90 p-1">
       {#each navItems as item}
         <button
           type="button"
-          on:click={() => onNavigate(item.key)}
-          class={`rounded-full px-3 py-1.5 text-sm font-medium transition ${
+          onclick={() => onNavigate(item.key)}
+          class={`rounded-full px-3 py-1.5 text-sm font-medium transition-all duration-200 hover:-translate-y-0.5 ${
             activeView === item.key
-              ? 'bg-slate-900 text-white shadow-sm'
-              : 'text-slate-600 hover:bg-white hover:text-slate-900'
+              ? 'bg-slate-200 text-slate-900 shadow-sm'
+              : 'text-slate-300 hover:bg-slate-800 hover:text-white'
           }`}
         >
           {item.label}
@@ -55,11 +55,11 @@
 
       <button
         type="button"
-        on:click={handleAuthAction}
-        class={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+        onclick={handleAuthAction}
+        class={`rounded-full px-4 py-2 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 ${
           state.isLoggedIn
-            ? 'bg-rose-100 text-rose-700 hover:bg-rose-200'
-            : 'bg-blue-600 text-white hover:bg-blue-700'
+            ? 'bg-rose-900/60 text-rose-200 hover:bg-rose-800/70'
+            : 'bg-blue-600 text-white hover:bg-blue-500'
         }`}
       >
         {state.isLoggedIn ? 'Logout' : 'Login'}

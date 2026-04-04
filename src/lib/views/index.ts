@@ -1,8 +1,8 @@
 import type { Component } from 'svelte'
 
 import HomeView from '$lib/views/HomeView.svelte'
-import AboutView from '$lib/views/AboutView.svelte'
-import ContactView from '$lib/views/ContactView.svelte'
+import ScoreboardView from '$lib/views/ScoreboardView.svelte'
+import Challenges from '$lib/views/Challenges.svelte'
 import LoginView from "$lib/views/LoginView.svelte";
 
 export type ViewConfig = {
@@ -13,8 +13,8 @@ export type ViewConfig = {
 
 export const views: ViewConfig[] = [
   { key: 'home', label: 'Home', component: HomeView },
-  { key: 'scoreboard', label: 'Scoreboard', component: AboutView },
-  { key: 'challenges', label: 'Challenges', component: ContactView },
+  { key: 'scoreboard', label: 'Scoreboard', component: ScoreboardView },
+  { key: 'challenges', label: 'Challenges', component: Challenges },
   { key: 'login', label: 'Login', component: LoginView },
 ]
 
