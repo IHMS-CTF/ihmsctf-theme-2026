@@ -3,11 +3,54 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ihmsctf-theme</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="description" content="IHMSCTF 2026 - Capture The Flag Competition. Compete in the ultimate cybersecurity challenge." />
+    <meta name="theme-color" content="#000000" />
+    <meta name="color-scheme" content="dark" />
+    <title>IHMSCTF 2026 | Capture The Flag</title>
+    
+    <!-- Preconnect to font sources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <style>
+      /* Critical CSS - prevent flash of unstyled content */
+      html, body {
+        margin: 0;
+        padding: 0;
+        background: #000000;
+        color: #e0ffe8;
+        min-height: 100vh;
+      }
+      
+      #app {
+        min-height: 100vh;
+      }
+      
+      /* Loading state before app mounts */
+      .app-loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        font-family: monospace;
+        font-size: 14px;
+        color: #00ff41;
+      }
+      
+      .app-loading::after {
+        content: 'INITIALIZING SYSTEM...';
+        animation: blink 1s step-end infinite;
+      }
+      
+      @keyframes blink {
+        0%, 50% { opacity: 1; }
+        51%, 100% { opacity: 0.3; }
+      }
+    </style>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app" class="app-loading"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

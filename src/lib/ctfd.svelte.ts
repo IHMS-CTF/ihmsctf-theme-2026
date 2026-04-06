@@ -109,6 +109,37 @@ export type TopScoreboardEntry = {
     solves: SolveEvent[]
 }
 
+export type TeamDetail = {
+    id: number
+    name: string
+    score: number
+    email?: string | null
+    affiliation?: string | null
+    country?: string | null
+    website?: string | null
+    hidden?: boolean
+    banned?: boolean
+    captain_id?: number | null
+    created?: string
+    members?: number[]
+}
+
+export type PublicUser = {
+    id: number
+    name: string
+    score: number
+    team_id?: number | null
+    email?: string | null
+    affiliation?: string | null
+    country?: string | null
+    website?: string | null
+    hidden?: boolean
+    banned?: boolean
+    created?: string
+    type?: string
+    place?: number | null
+}
+
 type ScoreboardResponse = {
     success?: boolean
     data?: ScoreboardEntry[]
@@ -118,6 +149,18 @@ type ScoreboardResponse = {
 type TopScoreboardResponse = {
     success?: boolean
     data?: Record<string, TopScoreboardEntry>
+    errors?: string[]
+}
+
+type TeamDetailResponse = {
+    success?: boolean
+    data?: TeamDetail
+    errors?: string[]
+}
+
+type PublicUserResponse = {
+    success?: boolean
+    data?: PublicUser
     errors?: string[]
 }
 
@@ -445,6 +488,50 @@ export async function getTopScoreboard(limit = 10): Promise<{ success: boolean; 
         return { success: true, data: entries }
     } catch (error) {
         return { success: false, error: error instanceof Error ? error.message : 'Failed to load top scoreboard' }
+    }
+}
+
+export async function getTeam(teamId: number): Promise<{ success: boolean; data?: TeamDetail; error?: string }> {
+    try {
+        const response = await fetch(`/api/v1/teams/${teamId}`, {
+            method: 'GET',
+            credentials: 'include',
+        })
+
+        if (!response.ok) {
+            return { success: false, error: `Failed to load team (${response.status})` }
+        }
+
+        const data = (await response.json()) as TeamDetailResponse
+        if (!data.success || !data.data) {
+            return { success: false, error: data.errors?.[0] ?? 'Failed to load team' }
+        }
+
+        return { success: true, data: data.data }
+    } catch (error) {
+        return { success: false, error: error instanceof Error ? error.message : 'Failed to load team' }
+    }
+}
+
+export async function getPublicUser(userId: number): Promise<{ success: boolean; data?: PublicUser; error?: string }> {
+    try {
+        const response = await fetch(`/api/v1/users/${userId}`, {
+            method: 'GET',
+            credentials: 'include',
+        })
+
+        if (!response.ok) {
+            return { success: false, error: `Failed to load user (${response.status})` }
+        }
+
+        const data = (await response.json()) as PublicUserResponse
+        if (!data.success || !data.data) {
+            return { success: false, error: data.errors?.[0] ?? 'Failed to load user' }
+        }
+
+        return { success: true, data: data.data }
+    } catch (error) {
+        return { success: false, error: error instanceof Error ? error.message : 'Failed to load user' }
     }
 }
 

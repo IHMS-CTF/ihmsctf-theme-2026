@@ -2,9 +2,12 @@ import { mount } from 'svelte'
 import App from './App.svelte'
 import './app.css'
 
+// Remove loading state
+const appEl = document.getElementById('app')!
+appEl.classList.remove('app-loading')
+
 const app = mount(App, {
-  target: document.getElementById('app')!,
-});
+  target: appEl,
+})
 
-export default app;
-
+export default app
