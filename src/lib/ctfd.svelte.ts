@@ -122,6 +122,7 @@ export type TeamDetail = {
     captain_id?: number | null
     created?: string
     members?: number[]
+    solves?: SolveEvent[]
 }
 
 export type PublicUser = {

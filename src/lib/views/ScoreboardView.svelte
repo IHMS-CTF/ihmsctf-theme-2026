@@ -40,57 +40,117 @@
   let selectedTeam = $state<TeamDetail | null>(null)
   let teamMembers = $state<PublicUser[]>([])
 
-  const buildCumulativeSeries = (entry: TopScoreboardEntry) => {
-    const solves = [...(entry.solves ?? [])].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-    const points: number[] = []
+  const teamPalette = [
+    '#00ff41',
+    '#00d4ff',
+    '#ff006e',
+    '#ffb800',
+    '#39ff6e',
+    '#00a8cc',
+    '#ff0044',
+    '#9ae84f',
+    '#00c8b4',
+    '#ffd54a',
+    '#7ad8ff',
+    '#ff7a59',
+  ]
+
+  const getSolveTimestamp = (date: string): number | null => {
+    const time = new Date(date).getTime()
+    return Number.isFinite(time) ? time : null
+  }
+
+  const getSortedSolves = (entry: TopScoreboardEntry) => {
+    return [...(entry.solves ?? [])]
+      .filter((solve) => getSolveTimestamp(solve.date) !== null)
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+  }
+
+  const getTimelineBounds = (data: TopScoreboardEntry[]) => {
+    const times = data
+      .flatMap((entry) => getSortedSolves(entry).map((solve) => getSolveTimestamp(solve.date)))
+      .filter((time): time is number => time !== null)
+
+    if (times.length === 0) {
+      const now = Date.now()
+      return { start: now - 60 * 60 * 1000, end: now }
+    }
+
+    const start = Math.min(...times)
+    const end = Math.max(...times)
+
+    if (start === end) {
+      return { start, end: end + 60 * 1000 }
+    }
+
+    return { start, end }
+  }
+
+  const buildCumulativeSeries = (entry: TopScoreboardEntry, start: number, end: number) => {
+    const solves = getSortedSolves(entry)
+
+    if (solves.length === 0) {
+      return [
+        { x: start, y: entry.score },
+        { x: end, y: entry.score },
+      ]
+    }
+
+    const points: Array<{ x: number; y: number }> = [{ x: start, y: 0 }]
     let running = 0
+
     for (const solve of solves) {
+      const solveTime = getSolveTimestamp(solve.date)
+      if (solveTime === null) continue
       running += solve.value ?? 0
-      points.push(running)
+      points.push({ x: solveTime, y: running })
     }
-    if (points.length === 0) {
-      points.push(entry.score)
+
+    const lastPoint = points[points.length - 1]
+    if (lastPoint && lastPoint.x < end) {
+      points.push({ x: end, y: lastPoint.y })
     }
+
     return points
+  }
+
+  const formatTimelineTick = (value: number) => {
+    return new Intl.DateTimeFormat(undefined, {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(new Date(value))
+  }
+
+  const getTeamColor = (index: number) => {
+    return teamPalette[index % teamPalette.length]
+  }
+
+  const getTeamAccent = (accountId: number) => {
+    const hue = (accountId * 53) % 360
+    return `hsl(${hue} 75% 60%)`
   }
 
   const renderChart = () => {
     if (!chartCanvas || topEntries.length === 0) return
 
-    const maxSolveCount = Math.max(1, ...topEntries.map((entry) => Math.max(1, entry.solves?.length ?? 0)))
-    const labels = Array.from({ length: maxSolveCount }, (_, i) => `${i + 1}`)
-    
-    // Hacker-themed color palette
-    const palette = [
-      '#00ff41', // Terminal green
-      '#00d4ff', // Cyan
-      '#ff006e', // Magenta
-      '#ffb800', // Amber
-      '#39ff6e', // Light green
-      '#00a8cc', // Dark cyan
-      '#ff0044', // Red
-      '#c084fc', // Purple
-      '#22d3ee', // Teal
-      '#facc15', // Yellow
-    ]
+    const { start, end } = getTimelineBounds(topEntries)
 
     const datasets = topEntries.map((entry, index) => {
-      const series = buildCumulativeSeries(entry)
-      const padded = [...series]
-      while (padded.length < maxSolveCount) {
-        padded.push(padded[padded.length - 1] ?? entry.score)
-      }
+      const color = getTeamColor(index)
+      const series = buildCumulativeSeries(entry, start, end)
 
       return {
         label: entry.name,
-        data: padded,
-        borderColor: palette[index % palette.length],
-        backgroundColor: `${palette[index % palette.length]}20`,
+        data: series,
+        borderColor: color,
+        backgroundColor: `${color}20`,
         borderWidth: 2,
         tension: 0.3,
         pointRadius: 0,
         pointHoverRadius: 4,
-        pointHoverBackgroundColor: palette[index % palette.length],
+        pointHoverBackgroundColor: color,
         fill: false,
       }
     })
@@ -100,7 +160,6 @@
     const config: ChartConfiguration<'line'> = {
       type: 'line',
       data: {
-        labels,
         datasets,
       },
       options: {
@@ -141,13 +200,22 @@
             padding: 12,
             displayColors: true,
             boxPadding: 4,
+            callbacks: {
+              title: (items) => {
+                const x = items[0]?.parsed?.x
+                return typeof x === 'number' ? formatTimelineTick(x) : 'Time'
+              },
+            },
           },
         },
         scales: {
           x: {
+            type: 'linear',
+            min: start,
+            max: end,
             title: {
               display: true,
-              text: 'SOLVES',
+              text: 'TIME',
               color: '#4a8060',
               font: {
                 family: "'Orbitron', sans-serif",
@@ -161,6 +229,8 @@
                 family: "'JetBrains Mono', monospace",
                 size: 10,
               },
+              callback: (value) => formatTimelineTick(Number(value)),
+              maxTicksLimit: 6,
             },
             grid: { 
               color: '#0d2922',
@@ -226,7 +296,21 @@
     }
 
     entries = scoreboardResult.data
-    topEntries = topResult.data
+
+    const withTeamSolves = await Promise.all(
+      topResult.data.map(async (entry) => {
+        const teamResult = await getTeam(entry.id)
+        if (teamResult.success && teamResult.data?.solves?.length) {
+          return {
+            ...entry,
+            solves: teamResult.data.solves,
+          }
+        }
+        return entry
+      })
+    )
+
+    topEntries = withTeamSolves
     loading = false
 
     await Promise.resolve()
@@ -390,7 +474,7 @@
                   class:gold={medalColor === 'gold'}
                   class:silver={medalColor === 'silver'}
                   class:bronze={medalColor === 'bronze'}
-                  style="animation-delay: {i * 20}ms"
+                  style="animation-delay: {i * 20}ms; --team-accent: {getTeamAccent(entry.account_id)}"
                   role="button"
                   tabindex="0"
                   onclick={() => openTeamDetails(entry)}
@@ -405,7 +489,10 @@
                     </div>
                   </td>
                   <td class="col-team">
-                    <span class="team-name">{entry.name}</span>
+                    <span class="team-name-wrap">
+                      <span class="team-color-dot" aria-hidden="true"></span>
+                      <span class="team-name">{entry.name}</span>
+                    </span>
                   </td>
                   <td class="col-score">
                     <span class="score-value">{entry.score.toLocaleString()}</span>
@@ -712,14 +799,28 @@
   .team-name {
     font-size: 0.875rem;
     font-weight: 500;
-    color: var(--text-primary);
+    color: var(--team-accent, var(--text-primary));
     text-decoration: underline;
     text-decoration-color: transparent;
     transition: text-decoration-color var(--transition-fast);
   }
 
+  .team-name-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .team-color-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 999px;
+    background: var(--team-accent, var(--color-terminal));
+    box-shadow: 0 0 8px color-mix(in srgb, var(--team-accent, var(--color-terminal)) 55%, transparent);
+  }
+
   .team-row:hover .team-name {
-    text-decoration-color: var(--color-terminal-muted);
+    text-decoration-color: color-mix(in srgb, var(--team-accent, var(--color-terminal)) 42%, transparent);
   }
   
   .score-value {

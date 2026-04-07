@@ -4,6 +4,8 @@
   import { defaultView, getViewByKey, views, type ViewConfig } from '$lib/views'
   import { state as authState, init as initCtfd } from '$lib/ctfd.svelte'
 
+  const authenticatedDefaultView = 'challenges'
+
   // Read view from URL hash
   const readViewFromHash = (): string => {
     if (typeof window === 'undefined') return defaultView
@@ -17,6 +19,12 @@
     if (!viewConfig) {
       activeView = defaultView
       updateHash(defaultView)
+      return
+    }
+
+    if (view === 'login' && authState.isLoggedIn) {
+      activeView = authenticatedDefaultView
+      updateHash(authenticatedDefaultView)
       return
     }
 
@@ -63,6 +71,12 @@
     const syncActiveView = () => {
       const hashView = readViewFromHash()
       const viewConfig = getViewByKey(hashView)
+
+      if (hashView === 'login' && authState.isLoggedIn) {
+        activeView = authenticatedDefaultView
+        updateHash(authenticatedDefaultView)
+        return
+      }
       
       // Auth guard on hash change
       if (viewConfig?.requiresAuth && !authState.isLoggedIn) {
