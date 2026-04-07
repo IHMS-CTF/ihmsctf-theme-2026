@@ -174,6 +174,12 @@
     return []
   }
 
+  const portal = (node: HTMLElement) => {
+    // Keep the modal outside animated view containers so fixed positioning
+    // stays relative to the viewport instead of the scrollable challenges view.
+    document.body.appendChild(node)
+  }
+
   const buildGroups = (challenges: Challenge[]): ChallengeGroup[] => {
     const byCategory = new Map<string, Challenge[]>()
     for (const challenge of challenges) {
@@ -332,11 +338,23 @@
     if (e.key === 'Escape' && modalOpen) closeModal()
   }
 
-  onMount(async () => {
-    await init()
-    await refreshChallenges()
-    window.addEventListener('keydown', handleKeydown)
+  onMount(() => {
+    let disposed = false
+
+    const setup = async () => {
+      await init()
+      if (disposed) return
+
+      await refreshChallenges()
+      if (disposed) return
+
+      window.addEventListener('keydown', handleKeydown)
+    }
+
+    void setup()
+
     return () => {
+      disposed = true
       document.body.style.overflow = ''
       window.removeEventListener('keydown', handleKeydown)
     }
@@ -473,6 +491,7 @@
 <!-- Modal Portal - Rendered at document level -->
 {#if modalOpen}
   <div 
+    use:portal
     class="modal-backdrop"
     role="dialog"
     aria-modal="true"
@@ -675,7 +694,7 @@
 
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    to { opacity: 1; transform: none; }
   }
 
   /* Header */

@@ -57,10 +57,9 @@
     }
   })
 
-  onMount(async () => {
-    // Initialize CTFd API
-    await initCtfd()
-    
+  onMount(() => {
+    let disposed = false
+
     const syncActiveView = () => {
       const hashView = readViewFromHash()
       const viewConfig = getViewByKey(hashView)
@@ -76,17 +75,25 @@
       activeView = hashView
     }
 
-    syncActiveView()
+    const setup = async () => {
+      // Initialize CTFd API
+      await initCtfd()
+      if (disposed) return
 
-    if (!window.location.hash) {
-      updateHash(activeView)
+      syncActiveView()
+
+      if (!window.location.hash) {
+        updateHash(activeView)
+      }
+
+      window.addEventListener('hashchange', syncActiveView)
+      isInitialized = true
     }
 
-    window.addEventListener('hashchange', syncActiveView)
-    
-    isInitialized = true
-    
+    void setup()
+
     return () => {
+      disposed = true
       window.removeEventListener('hashchange', syncActiveView)
     }
   })
